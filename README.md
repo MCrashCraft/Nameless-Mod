@@ -15,9 +15,9 @@ The mods connect a server to an existing NamelessMC website, with account comman
 
 The requested range is **every stable Minecraft release from 1.20.1 through 26.3**. Each artifact requires one exact Minecraft release. [Coverage and limitations](compatibility/README.md) distinguish published loader availability, successful builds and runtime checks. Forge has no published builds for Minecraft 1.20.5 or 1.21.2. Some selected NeoForge loaders are beta releases.
 
-**The multi-version 0.2.0 work is undergoing validation. A selectable target is not a verified compatibility claim.** Consult the [local validation table](compatibility/VALIDATION.md) before installing an artifact. It records the current native test and packaged-server results separately from pending targets. The [build workflow](https://github.com/MCrashCraft/Nameless-Mod/actions/workflows/mod-builds.yml) can repeat those checks when GitHub Actions is available. The earlier Forge 1.20.1 version 0.1.1 passed 43 tests and isolated mock-website/server checks; those historical results do not certify every new port.
+Version **0.2.0** has **67 locally compiled artifacts**, each passing all 46 native unit assertions and its package audit. Exact packaged-server checks completed with **88 clean results across 90 published loader combinations**, with two failed Forge shutdown checks documented below. Consult the [local validation table](compatibility/VALIDATION.md) for exact versions, artifact hashes and limits. These checks do not certify real website purchases, player logins or compatibility with every other mod. The [build workflow](https://github.com/MCrashCraft/Nameless-Mod/actions/workflows/mod-builds.yml) can repeat the checks when GitHub Actions is available; no cloud success is claimed.
 
-Forge 1.21 has a reproduced upstream configuration-watcher shutdown hang, including in a fresh server with no mods. It remains a failed unassisted process-exit check; see [known loader limitations](compatibility/KNOWN-ISSUES.md).
+Forge 1.21 and 1.21.9 have reproduced configuration-watcher shutdown limitations, including empty-mod control cases. They remain failed unassisted process-exit checks; see [known loader limitations](compatibility/KNOWN-ISSUES.md).
 
 ## Build
 

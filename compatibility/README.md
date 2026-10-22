@@ -8,7 +8,7 @@ The native Forge, NeoForge and Fabric projects produce 67 distinct artifacts. Qu
 
 The [local validation table](VALIDATION.md) records completed native suites and packaged-server checks. Its [machine-readable receipts](validation.json) include the exact tested artifact hashes. Pending entries are not verified support claims. These local results are independent of GitHub Actions availability.
 
-The [known loader limitations](KNOWN-ISSUES.md) include the independently reproduced Forge 1.21 configuration-watcher shutdown hang. A successful native build does not override that failed process-exit check.
+The [known loader limitations](KNOWN-ISSUES.md) include independently reproduced Forge 1.21 and 1.21.9 configuration-watcher shutdown hangs. A successful native build does not override those failed process-exit checks.
 
 NeoForge's selected loaders for 1.20.3, 1.20.5, 1.21.2, 1.21.6, 1.21.7, 1.21.9, 26.1 and 26.1.1 are beta releases. This is recorded in each target, not hidden behind a broad version range.
 

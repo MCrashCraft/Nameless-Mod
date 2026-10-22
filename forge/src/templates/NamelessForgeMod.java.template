@@ -60,6 +60,7 @@ public final class NamelessForgeMod {
                     configured(), plugin.permissions() != null ? "LuckPerms" : "vanilla operator fallback");
         } catch (RuntimeException | LinkageError error) {
             loaded = false;
+            if (scheduler != null) scheduler.nextGeneration();
             if (plugin != null) {
                 plugin.logger().logException(error);
                 try { plugin.unload(); } catch (RuntimeException ignored) { }
@@ -97,8 +98,8 @@ public final class NamelessForgeMod {
             LOGGER.info("Nameless Forge configuration reloaded; website configured={}", configured());
         } catch (RuntimeException error) {
             plugin.logger().logException(error);
-            try { plugin.unload(); } catch (RuntimeException ignored) { }
             scheduler.nextGeneration();
+            try { plugin.unload(); } catch (RuntimeException ignored) { }
             LOGGER.error("Nameless Forge reload failed ({}). Correct its configuration and reload again.",
                     error.getClass().getSimpleName());
             throw error;
@@ -151,6 +152,7 @@ public final class NamelessForgeMod {
     private void stopping(ServerStoppingEvent event) {
         if (server != event.getServer()) return;
         loaded = false;
+        if (scheduler != null) scheduler.nextGeneration();
         try { if (plugin != null) plugin.unload(); }
         catch (RuntimeException error) { LOGGER.warn("Nameless shutdown cleanup: {}", error.getClass().getSimpleName()); }
         finally {

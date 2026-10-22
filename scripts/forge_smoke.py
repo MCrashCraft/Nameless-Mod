@@ -132,7 +132,8 @@ def run(args) -> dict:
         "view-distance=2\nsimulation-distance=2\nspawn-protection=0\ndifficulty=peaceful\n"
         "max-tick-time=120000\nonline-mode=true\n", encoding="utf-8")
     launch = ["@" + str(argfile)] if argfile.is_file() else ["-jar", str(shim)]
-    process = subprocess.Popen([str(java), "-Xms256M", "-Xmx1536M", *launch, "nogui"],
+    process = subprocess.Popen([str(java), "-Xms256M", "-Xmx1536M",
+                               "-Dterminal.jline=false", "-Dterminal.ansi=false", *launch, "nogui"],
                                cwd=root, env=environment, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
                                stderr=subprocess.STDOUT, text=True, encoding="utf-8", errors="replace",
                                creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0))
@@ -153,7 +154,10 @@ def run(args) -> dict:
     ready = False
     stopped = False
     shutdown_help_queued = timed_out = False
+    config_watcher_exercised = False
     command_at = None
+    saved_at = None
+    shutdown_diagnostic = None
     transcript = []
     with (root / "smoke.log").open("w", encoding="utf-8") as log:
         try:
@@ -161,12 +165,35 @@ def run(args) -> dict:
                 try:
                     line = lines.get(timeout=0.2)
                     log.write(line); log.flush(); transcript.append(line)
+                    if "ThreadedAnvilChunkStorage: All dimensions are saved" in line:
+                        saved_at = time.monotonic()
                     if "Done (" in line and "For help" in line:
                         ready = True
+                        if getattr(args, "exercise_config_watcher", False):
+                            config = root / "config/forge-common.toml"
+                            if not config.resolve().is_relative_to(root.resolve()) or not config.is_file():
+                                raise RuntimeError("Missing owned Forge config for the optional watcher check")
+                            # Same bytes, disposable fixture only: reproduce the documented
+                            # watcher trigger without changing a game configuration value.
+                            config.write_bytes(config.read_bytes())
+                            config_watcher_exercised = True
                         process.stdin.write("namelessforge:status\nnlpl help\nnlpl reload\nnamelessforge:status\n")
                         process.stdin.flush(); command_at = time.monotonic()
                 except queue.Empty:
                     pass
+                if saved_at is not None and shutdown_diagnostic is None and process.poll() is None \
+                        and time.monotonic() - saved_at > 20:
+                    jcmd = java.with_name("jcmd.exe" if os.name == "nt" else "jcmd")
+                    shutdown_diagnostic = "unavailable"
+                    if jcmd.is_file():
+                        with (root / "post-stop-threads.txt").open("w", encoding="utf-8") as dump:
+                            try:
+                                diagnostic = subprocess.run([str(jcmd), str(process.pid), "Thread.print"],
+                                    stdout=dump, stderr=subprocess.STDOUT, timeout=20, check=False,
+                                    creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0))
+                                shutdown_diagnostic = "captured" if diagnostic.returncode == 0 else "failed"
+                            except subprocess.TimeoutExpired:
+                                shutdown_diagnostic = "timed out"
                 if ready and not stopped and time.monotonic() - command_at > 5:
                     process.stdin.write("nlpl help\nstop\n"); process.stdin.flush()
                     stopped = shutdown_help_queued = True
@@ -195,15 +222,22 @@ def run(args) -> dict:
     platform_warnings = [line.strip() for line in transcript if any(marker in line for marker in (
         "Unable to locate English counter names", "Only supported on OSX/BSD", "Only supported on Linux"))]
     output_complete = reader_state["complete"] and not reader_thread.is_alive() and not reader_state["error"]
+    commands_reload_observed = text.count("Nameless Forge: not configured") >= 2 \
+        and "Nameless Forge configuration reloaded; website configured=false" in text
+    all_dimensions_saved = "ThreadedAnvilChunkStorage: All dimensions are saved" in text
     success = ready and shutdown_help_queued and output_complete and not timed_out \
-        and process.returncode == 0 and text.count("Nameless Forge: not configured") >= 2 \
-        and "Nameless Forge configuration reloaded; website configured=false" in text \
+        and (not getattr(args, "exercise_config_watcher", False) or config_watcher_exercised) \
+        and process.returncode == 0 and commands_reload_observed \
         and not runtime_errors
     result = {"minecraft": args.minecraft, "loader": "forge", "loader_version": forge,
               "java_major": target["java_major"], "java_executable": str(java), "started": ready,
               "exit_code": process.returncode, "status_reload_passed": success,
               "output_complete": output_complete, "shutdown_help_queued": shutdown_help_queued,
+              "commands_reload_observed": commands_reload_observed,
+              "all_dimensions_saved": all_dimensions_saved,
               "stdout_reader_error": reader_state["error"],
+              "headless_terminal": True, "shutdown_diagnostic": shutdown_diagnostic,
+              "config_watcher_exercised": config_watcher_exercised,
               "timed_out": timed_out,
               "runtime_verified": success, "runtime_errors": runtime_errors, "platform_warnings": platform_warnings,
               "mod_sha256": artifact_sha256,
@@ -225,6 +259,8 @@ if __name__ == "__main__":
     parser.add_argument("--work", type=Path, help="Empty scratch directory or one owned by this smoke runner")
     parser.add_argument("--java-home", type=Path)
     parser.add_argument("--mod-jar", type=Path)
+    parser.add_argument("--exercise-config-watcher", action="store_true",
+                        help="Write identical bytes to a disposable Forge config to check watcher shutdown")
     parser.add_argument("--accept-eula", action="store_true", help="Accept Minecraft EULA for this disposable test server")
     args = parser.parse_args()
     if not args.accept_eula:
