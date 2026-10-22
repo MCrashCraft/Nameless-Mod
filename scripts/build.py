@@ -30,9 +30,11 @@ def plan(loader, game):
         raise ValueError('Forge has no published loader for this Minecraft release')
     project = 'fabric' if loader == 'quilt' else loader
     modern = tuple(map(int, game.split('.'))) >= (1, 20, 5)
+    early_neoforge = project == 'neoforge' and game in ('1.20.2', '1.20.3', '1.20.5')
     gradle = ('9.6.0' if project == 'fabric' else
               '9.7.1' if project == 'forge' and modern else
-              '8.8' if project == 'forge' else '9.2.1')
+              '8.8' if project == 'forge' else
+              '8.14.5' if early_neoforge else '9.2.1')
     return dict(loader=loader, project=project, minecraft=game,
                 game_java=row['java_major'],
                 build_java=25 if project == 'fabric' else row['java_major'], gradle=gradle)
@@ -123,11 +125,18 @@ def main():
                 raise ValueError('Gradle executable not found')
             command = [str(executable)]
         else:
-            wrapper = (ROOT / 'build-tools/modern-gradle/wrapper/gradle-wrapper.jar'
-                       if selected['project'] == 'forge' and selected['gradle'].startswith('9.')
-                       else folder / 'gradle/wrapper/gradle-wrapper.jar')
+            if selected['project'] == 'forge' and selected['gradle'].startswith('9.'):
+                wrapper = ROOT / 'build-tools/modern-gradle/wrapper/gradle-wrapper.jar'
+            elif selected['project'] == 'neoforge' and selected['gradle'] == '8.14.5':
+                wrapper = folder / 'gradle-early/wrapper/gradle-wrapper.jar'
+            else:
+                wrapper = folder / 'gradle/wrapper/gradle-wrapper.jar'
             command = [str(java), '-Xmx64m', '-classpath', str(wrapper), 'org.gradle.wrapper.GradleWrapperMain']
-        command += ['--no-daemon', '--max-workers=2', '-PminecraftVersion=' + args.minecraft]
+        # Gradle's stale-output cleanup is keyed by task execution history. Sharing
+        # that history across targets can delete another target's classes or JAR.
+        project_cache = folder / '.gradle' / 'targets' / args.minecraft
+        command += ['--no-daemon', '--max-workers=2', '--project-cache-dir', str(project_cache),
+                    '-PminecraftVersion=' + args.minecraft]
         installations = args.java_installations or ','.join(dict.fromkeys(
             value for key, value in os.environ.items() if key.startswith('JAVA_HOME') and value))
         if installations:

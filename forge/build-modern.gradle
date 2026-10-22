@@ -22,6 +22,8 @@ java.toolchain.languageVersion = JavaLanguageVersion.of(target.java_major as int
 
 minecraft {
     if (!requestedGame.startsWith('26.')) mappings channel: 'official', version: requestedGame
+    // Official MCP configurations use a 4G initial heap; keep their decompiler bounded.
+    mavenizerArguments.addAll('--decompile-memory', '4G')
 }
 repositories {
     minecraft.mavenizer(it)

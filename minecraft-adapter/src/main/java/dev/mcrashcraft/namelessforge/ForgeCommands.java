@@ -128,6 +128,9 @@ public final class ForgeCommands {
                 try {
                     command.verifyPermissionThenExecute(sender, args);
                 } catch (RuntimeException error) {
+                    if (plugin.scheduler() instanceof ForgeScheduler scheduler && !scheduler.isCurrentTask()) {
+                        return;
+                    }
                     plugin.logger().severe("NamelessMC command failed: " + error.getClass().getSimpleName());
                     sender.sendMessage(Component.text("The website command could not be completed. Check the server log."));
                 }

@@ -28,6 +28,16 @@ class BuildTargetTests(unittest.TestCase):
         self.assertEqual(17, selected['game_java'])
         self.assertEqual(25, selected['build_java'])
 
+    def test_early_neoforge_selects_the_official_older_toolchain(self):
+        for game in ('1.20.2', '1.20.3'):
+            selected = build.plan('neoforge', game)
+            self.assertEqual('8.14.5', selected['gradle'])
+            self.assertEqual(17, selected['build_java'])
+        self.assertEqual('8.14.5', build.plan('neoforge', '1.20.5')['gradle'])
+        self.assertEqual(21, build.plan('neoforge', '1.20.5')['build_java'])
+        self.assertEqual('9.2.1', build.plan('neoforge', '1.20.1')['gradle'])
+        self.assertEqual('9.2.1', build.plan('neoforge', '1.20.4')['gradle'])
+
     def test_a_broad_range_or_bundled_game_is_rejected(self):
         for invalid in ('range', 'game_class', 'addon', 'license'):
             with self.subTest(invalid=invalid), tempfile.TemporaryDirectory() as folder:

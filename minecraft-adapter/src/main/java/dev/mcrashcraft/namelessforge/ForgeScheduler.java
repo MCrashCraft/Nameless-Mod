@@ -52,6 +52,11 @@ public final class ForgeScheduler extends AbstractScheduler implements AutoClose
         return !closed.get() && generation.get() == epoch;
     }
 
+    /** In-flight website work must stop reporting errors once a reload invalidates it. */
+    boolean isCurrentTask() {
+        return current(epoch());
+    }
+
     private Runnable guarded(Runnable task, long epoch) {
         return () -> {
             if (!current(epoch)) return;
@@ -137,7 +142,7 @@ public final class ForgeScheduler extends AbstractScheduler implements AutoClose
         };
     }
 
-    /** Called after core unload, before core reload. Old workers cannot enqueue new-world callbacks. */
+    /** Call before core unload. Old workers cannot enqueue callbacks or report obsolete failures. */
     public void nextGeneration() {
         long next = generation.incrementAndGet();
         // A deliberate reload on the server thread must be allowed to initialize its new tasks.

@@ -69,6 +69,7 @@ public final class NamelessNeoForgeMod {
                     configured(), plugin.permissions() != null ? "LuckPerms" : "vanilla operator fallback");
         } catch (RuntimeException | LinkageError error) {
             loaded = false;
+            if (scheduler != null) scheduler.nextGeneration();
             if (plugin != null) {
                 plugin.logger().logException(error);
                 try { plugin.unload(); } catch (RuntimeException ignored) { }
@@ -98,16 +99,16 @@ public final class NamelessNeoForgeMod {
         }
         loaded = false;
         try {
-            plugin.unload();
             scheduler.nextGeneration();
+            plugin.unload();
             plugin.load();
             audiences.refreshPlayers();
             loaded = true;
             LOGGER.info("Nameless NeoForge configuration reloaded; website configured={}", configured());
         } catch (RuntimeException error) {
             plugin.logger().logException(error);
-            try { plugin.unload(); } catch (RuntimeException ignored) { }
             scheduler.nextGeneration();
+            try { plugin.unload(); } catch (RuntimeException ignored) { }
             LOGGER.error("Nameless NeoForge reload failed ({}). Correct its configuration and reload again.",
                     error.getClass().getSimpleName());
             throw error;
@@ -160,6 +161,7 @@ public final class NamelessNeoForgeMod {
     private void stopping(ServerStoppingEvent event) {
         if (server != event.getServer()) return;
         loaded = false;
+        if (scheduler != null) scheduler.nextGeneration();
         try { if (plugin != null) plugin.unload(); }
         catch (RuntimeException error) { LOGGER.warn("Nameless shutdown cleanup: {}", error.getClass().getSimpleName()); }
         finally {

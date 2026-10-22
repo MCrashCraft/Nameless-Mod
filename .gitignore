@@ -33,6 +33,7 @@ target/
 *.jar
 !**/gradle/wrapper/gradle-wrapper.jar
 !build-tools/modern-gradle/wrapper/gradle-wrapper.jar
+!neoforge/gradle-early/wrapper/gradle-wrapper.jar
 **/__pycache__/
 
 # Authentication and private keys must be configured on the server, never committed.

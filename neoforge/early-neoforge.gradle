@@ -1,0 +1,10 @@
+// These early releases predate the Maven ModDev bundle capability.
+// Use their official NeoGradle userdev format with Gradle 8.14.5 and the target JDK.
+plugins {
+    id 'java-library'
+    id 'net.neoforged.gradle.userdev' version '7.0.116'
+    id 'com.gradleup.shadow' version '9.3.0'
+}
+
+ext.earlyNeoGradle = true
+apply from: 'common.gradle'

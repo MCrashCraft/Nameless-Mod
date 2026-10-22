@@ -171,12 +171,19 @@ def run(version: str, loader: str, timeout: int) -> dict:
             if process.poll() is None:
                 process.terminate(); process.wait(timeout=20)
     text = "".join(output)
+    failure_markers = ("ExceptionInInitializerError", "NoClassDefFoundError", "NoSuchMethodError", "NoSuchFieldError",
+                       "IllegalAccessError", "NamelessMC command failed",
+                       "NamelessMC initialization failed", "Nameless background task failed", "NamelessMC reload failed")
+    runtime_errors = [line.rstrip() for line in output if any(marker in line for marker in failure_markers)]
+    platform_warnings = [line.rstrip() for line in output if "NullPointerException" in line and "oshi." in line]
     success = ready and process.returncode == 0 and "NamelessMC: not configured" in text \
         and "NamelessMC configuration reloaded; website configured=false" in text \
-        and "NamelessMC initialization failed" not in text
+        and not runtime_errors
     result = {"minecraft": version, "loader": loader, "loader_version": target[loader]["loader"],
               "java_major": target["java_major"], "java_executable": str(java), "started": ready, "exit_code": process.returncode,
               "status_reload_passed": success, "mod_sha256": hashlib.sha256(mod.read_bytes()).hexdigest(),
+              "runtime_errors": runtime_errors,
+              "platform_warnings": platform_warnings,
               "log": str(root / "smoke.log")}
     (root / "result.json").write_text(json.dumps(result, indent=2) + "\n")
     return result

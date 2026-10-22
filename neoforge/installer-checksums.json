@@ -1,0 +1,144 @@
+{
+  "retrieved_utc": "2026-10-22T10:26:19.612604+00:00",
+  "source": "Official NeoForged release Maven SHA-256 sidecars",
+  "installers": [
+    {
+      "minecraft": "1.20.1",
+      "coordinate": "net.neoforged:forge:1.20.1-47.1.106",
+      "url": "https://maven.neoforged.net/releases/net/neoforged/forge/1.20.1-47.1.106/forge-1.20.1-47.1.106-installer.jar",
+      "sha256": "c1ea1c3be532c4444004efd7f9cc71e1590d010ff44845b93effba61e3bd1526"
+    },
+    {
+      "minecraft": "1.20.2",
+      "coordinate": "net.neoforged:neoforge:20.2.93",
+      "url": "https://maven.neoforged.net/releases/net/neoforged/neoforge/20.2.93/neoforge-20.2.93-installer.jar",
+      "sha256": "f2badd12f9e5d0cef4d2c9143d1ae2e008345fa7438e89cee629c13e33de00c7"
+    },
+    {
+      "minecraft": "1.20.3",
+      "coordinate": "net.neoforged:neoforge:20.3.8-beta",
+      "url": "https://maven.neoforged.net/releases/net/neoforged/neoforge/20.3.8-beta/neoforge-20.3.8-beta-installer.jar",
+      "sha256": "d59ba6f0c867ddaafe0247ba7ddf527389897806795b9bd543a2c4313695f9d7"
+    },
+    {
+      "minecraft": "1.20.4",
+      "coordinate": "net.neoforged:neoforge:20.4.253",
+      "url": "https://maven.neoforged.net/releases/net/neoforged/neoforge/20.4.253/neoforge-20.4.253-installer.jar",
+      "sha256": "8f1413379067059acc0151444b17536cfad97756d99fc70e45587bf229c986fa"
+    },
+    {
+      "minecraft": "1.20.5",
+      "coordinate": "net.neoforged:neoforge:20.5.21-beta",
+      "url": "https://maven.neoforged.net/releases/net/neoforged/neoforge/20.5.21-beta/neoforge-20.5.21-beta-installer.jar",
+      "sha256": "a7161d984a5f72395c53557e546e555290f1e2f4a7e4b3b701a0f9a21509b66e"
+    },
+    {
+      "minecraft": "1.20.6",
+      "coordinate": "net.neoforged:neoforge:20.6.144",
+      "url": "https://maven.neoforged.net/releases/net/neoforged/neoforge/20.6.144/neoforge-20.6.144-installer.jar",
+      "sha256": "c3d5ba609ba9fbc6e49cd1aa0968234728c89cc726b49fe29d71e2b481a1b3d0"
+    },
+    {
+      "minecraft": "1.21",
+      "coordinate": "net.neoforged:neoforge:21.0.167",
+      "url": "https://maven.neoforged.net/releases/net/neoforged/neoforge/21.0.167/neoforge-21.0.167-installer.jar",
+      "sha256": "41f27bce9874fdb51040eb76ca89830c49e0dd0be4261a9dabbab3cd7c9f1687"
+    },
+    {
+      "minecraft": "1.21.1",
+      "coordinate": "net.neoforged:neoforge:21.1.264",
+      "url": "https://maven.neoforged.net/releases/net/neoforged/neoforge/21.1.264/neoforge-21.1.264-installer.jar",
+      "sha256": "d7c035dd5436a7c524dfbad6df191b0ef34179fd3edfee9dc99262af3b80239b"
+    },
+    {
+      "minecraft": "1.21.2",
+      "coordinate": "net.neoforged:neoforge:21.2.1-beta",
+      "url": "https://maven.neoforged.net/releases/net/neoforged/neoforge/21.2.1-beta/neoforge-21.2.1-beta-installer.jar",
+      "sha256": "e4b6e64c9192e3baacb6223bfaa65ce2d677b4f4ad74ac051335681fd6a70e34"
+    },
+    {
+      "minecraft": "1.21.3",
+      "coordinate": "net.neoforged:neoforge:21.3.100",
+      "url": "https://maven.neoforged.net/releases/net/neoforged/neoforge/21.3.100/neoforge-21.3.100-installer.jar",
+      "sha256": "8e6cde696f86e20d6d5b95d95d67baf7fbfc6370f1afc82c2323137f5a255dc8"
+    },
+    {
+      "minecraft": "1.21.4",
+      "coordinate": "net.neoforged:neoforge:21.4.161",
+      "url": "https://maven.neoforged.net/releases/net/neoforged/neoforge/21.4.161/neoforge-21.4.161-installer.jar",
+      "sha256": "3696ad5d47dee24b09a557c98289a82834ef539fee7634ebd26e1e6ea92b881b"
+    },
+    {
+      "minecraft": "1.21.5",
+      "coordinate": "net.neoforged:neoforge:21.5.101",
+      "url": "https://maven.neoforged.net/releases/net/neoforged/neoforge/21.5.101/neoforge-21.5.101-installer.jar",
+      "sha256": "a337d3d6de4b0bc5e0c38bde829078b071ddd55352395b944f4f9020a1b37974"
+    },
+    {
+      "minecraft": "1.21.6",
+      "coordinate": "net.neoforged:neoforge:21.6.20-beta",
+      "url": "https://maven.neoforged.net/releases/net/neoforged/neoforge/21.6.20-beta/neoforge-21.6.20-beta-installer.jar",
+      "sha256": "e85b8ed2614f2ab3f10d2d179064e3e81f5836519a074d22b8a8460f2e91b5d5"
+    },
+    {
+      "minecraft": "1.21.7",
+      "coordinate": "net.neoforged:neoforge:21.7.25-beta",
+      "url": "https://maven.neoforged.net/releases/net/neoforged/neoforge/21.7.25-beta/neoforge-21.7.25-beta-installer.jar",
+      "sha256": "1ceecf4fad699ec5ff1f02dbfd9b08b49069ac158adb1f1b9133f9db524f0fe1"
+    },
+    {
+      "minecraft": "1.21.8",
+      "coordinate": "net.neoforged:neoforge:21.8.57",
+      "url": "https://maven.neoforged.net/releases/net/neoforged/neoforge/21.8.57/neoforge-21.8.57-installer.jar",
+      "sha256": "12eea65d823b1e1e2d3133d5b48acef7881f7d66ad1c585772ae1fe1851d4311"
+    },
+    {
+      "minecraft": "1.21.9",
+      "coordinate": "net.neoforged:neoforge:21.9.16-beta",
+      "url": "https://maven.neoforged.net/releases/net/neoforged/neoforge/21.9.16-beta/neoforge-21.9.16-beta-installer.jar",
+      "sha256": "fde025c65f042a39308e5313b6023db9f17f3d77c35a27c66d9065115759a78e"
+    },
+    {
+      "minecraft": "1.21.10",
+      "coordinate": "net.neoforged:neoforge:21.10.64",
+      "url": "https://maven.neoforged.net/releases/net/neoforged/neoforge/21.10.64/neoforge-21.10.64-installer.jar",
+      "sha256": "6adb1f063358b22b050834323a4f68df47c93d082bc49a8a0a97aec22b789427"
+    },
+    {
+      "minecraft": "1.21.11",
+      "coordinate": "net.neoforged:neoforge:21.11.48",
+      "url": "https://maven.neoforged.net/releases/net/neoforged/neoforge/21.11.48/neoforge-21.11.48-installer.jar",
+      "sha256": "1f14a4bac4aa885a497550fa5a8374451b7014cec27e1bb69ab16742fb689db0"
+    },
+    {
+      "minecraft": "26.1",
+      "coordinate": "net.neoforged:neoforge:26.1.0.19-beta",
+      "url": "https://maven.neoforged.net/releases/net/neoforged/neoforge/26.1.0.19-beta/neoforge-26.1.0.19-beta-installer.jar",
+      "sha256": "8fba9309b78ffb14a3791ed64a42b28a4bc924bb38942046949d8b0c7ebd6cc0"
+    },
+    {
+      "minecraft": "26.1.1",
+      "coordinate": "net.neoforged:neoforge:26.1.1.15-beta",
+      "url": "https://maven.neoforged.net/releases/net/neoforged/neoforge/26.1.1.15-beta/neoforge-26.1.1.15-beta-installer.jar",
+      "sha256": "210855229fb30c2378e3734902c1d07ff62ed97ff55baac21e57f42594b7c063"
+    },
+    {
+      "minecraft": "26.1.2",
+      "coordinate": "net.neoforged:neoforge:26.1.2.122",
+      "url": "https://maven.neoforged.net/releases/net/neoforged/neoforge/26.1.2.122/neoforge-26.1.2.122-installer.jar",
+      "sha256": "f69dcaadc4ccbefe65aea07da10fc7b1af96cd68c13ca1e968fbb021d0a58a59"
+    },
+    {
+      "minecraft": "26.2",
+      "coordinate": "net.neoforged:neoforge:26.2.0.93",
+      "url": "https://maven.neoforged.net/releases/net/neoforged/neoforge/26.2.0.93/neoforge-26.2.0.93-installer.jar",
+      "sha256": "7618883b9d87186281da2bd2a5e9a11af042ed15112bb63ccfc62bb0230ca699"
+    },
+    {
+      "minecraft": "26.3",
+      "coordinate": "net.neoforged:neoforge:26.3.0.95",
+      "url": "https://maven.neoforged.net/releases/net/neoforged/neoforge/26.3.0.95/neoforge-26.3.0.95-installer.jar",
+      "sha256": "59ed4c58cc5b49e3df876658196d34c23184f5f73986e352508cdbddc88aa7fb"
+    }
+  ]
+}

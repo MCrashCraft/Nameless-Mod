@@ -37,7 +37,7 @@ class CoreHardeningTest {
         @Override public AbstractScheduledTask runTimer(Runnable runnable, Duration interval) { timer = runnable; return null; }
         @Override public AbstractScheduledTask runDelayed(Runnable runnable, Duration delay) { return null; }
         Runnable next() throws InterruptedException {
-            Runnable next = asynchronous.poll(2, TimeUnit.SECONDS);
+            Runnable next = asynchronous.poll(10, TimeUnit.SECONDS);
             assertNotNull(next, "expected a bounded background initialization task");
             return next;
         }
@@ -73,12 +73,12 @@ class CoreHardeningTest {
                 boolean users = exchange.getRequestURI().getPath().contains("users");
                 if (old && blockOld) {
                     oldEntered.countDown();
-                    try { releaseOld.await(3, TimeUnit.SECONDS); }
+                    try { releaseOld.await(30, TimeUnit.SECONDS); }
                     catch (InterruptedException e) { Thread.currentThread().interrupt(); }
                 }
                 if (users && blockUsers) {
                     usersEntered.countDown();
-                    try { releaseUsers.await(3, TimeUnit.SECONDS); }
+                    try { releaseUsers.await(30, TimeUnit.SECONDS); }
                     catch (InterruptedException e) { Thread.currentThread().interrupt(); }
                 }
                 String response = users
@@ -125,24 +125,26 @@ class CoreHardeningTest {
             website.blockOld = true;
             QueuedScheduler scheduler = new QueuedScheduler();
             ConfigurationHandler config = config("reload");
-            configure(config, website.url("/old/"), "PT3S");
+            // Coordination waits allow parallel native builds; nonblocking and
+            // bounded HTTP timeout behavior have separate unchanged assertions.
+            configure(config, website.url("/old/"), "PT15S");
             ApiProvider provider = new ApiProvider(scheduler, new QuietLogger(config), config);
             ExecutorService workers = Executors.newFixedThreadPool(2);
             try {
                 provider.load();
                 Future<?> previous = workers.submit(scheduler.next());
-                assertTrue(website.oldEntered.await(2, TimeUnit.SECONDS));
+                assertTrue(website.oldEntered.await(10, TimeUnit.SECONDS));
                 assertTimeout(Duration.ofMillis(200), () -> assertNull(provider.apiIfCached()));
 
                 provider.unload();
-                configure(config, website.url("/new/"), "PT3S");
+                configure(config, website.url("/new/"), "PT15S");
                 provider.load();
-                workers.submit(scheduler.next()).get(2, TimeUnit.SECONDS);
+                workers.submit(scheduler.next()).get(10, TimeUnit.SECONDS);
                 NamelessAPI current = provider.apiIfCached();
                 assertNotNull(current);
                 assertEquals("/new/", current.apiUrl().getPath());
                 website.releaseOld.countDown();
-                previous.get(2, TimeUnit.SECONDS);
+                previous.get(10, TimeUnit.SECONDS);
                 assertSame(current, provider.apiIfCached(), "old HTTP completion must not republish stale credentials/client");
             } finally {
                 website.releaseOld.countDown();
@@ -257,22 +259,22 @@ class CoreHardeningTest {
             NamelessPlugin plugin = new NamelessPlugin(temporary.resolve("users"), scheduler,
                     QuietLogger::new, null, "forge-test", "1.20.1");
             plugin.config().load();
-            configure(plugin.config(), website.url("/new/"), "PT3S");
+            configure(plugin.config(), website.url("/new/"), "PT15S");
             ExecutorService worker = Executors.newSingleThreadExecutor();
             try {
                 plugin.apiProvider().load();
-                worker.submit(scheduler.next()).get(2, TimeUnit.SECONDS);
+                worker.submit(scheduler.next()).get(10, TimeUnit.SECONDS);
                 assertNotNull(plugin.apiProvider().apiIfCached());
                 UserCache cache = plugin.userCache();
                 website.blockUsers = true;
                 cache.load();
                 scheduler.timer.run();
                 Future<?> previous = worker.submit(scheduler.next());
-                assertTrue(website.usersEntered.await(2, TimeUnit.SECONDS));
+                assertTrue(website.usersEntered.await(10, TimeUnit.SECONDS));
                 cache.unload();
                 website.blockUsers = false;
                 website.releaseUsers.countDown();
-                previous.get(2, TimeUnit.SECONDS);
+                previous.get(10, TimeUnit.SECONDS);
                 assertTrue(cache.usernames().isEmpty());
                 assertTrue(cache.minecraftUsernames().isEmpty());
                 cache.load();

@@ -89,8 +89,8 @@ public final class NamelessForgeMod {
         }
         loaded = false;
         try {
-            plugin.unload();
             scheduler.nextGeneration();
+            plugin.unload();
             plugin.load();
             audiences.refreshPlayers();
             loaded = true;

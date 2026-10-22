@@ -9,6 +9,31 @@ import java.util.concurrent.atomic.AtomicReference;
 import static org.junit.jupiter.api.Assertions.*;
 
 class ForgeSchedulerTest {
+    @Test void reloadInvalidatesRunningWorkBeforeItsOldConfigurationIsUnloaded() throws Exception {
+        CountDownLatch started = new CountDownLatch(1);
+        CountDownLatch inspectAfterReload = new CountDownLatch(1);
+        CountDownLatch finished = new CountDownLatch(1);
+        java.util.concurrent.atomic.AtomicBoolean obsoleteWorkerIsCurrent = new java.util.concurrent.atomic.AtomicBoolean(true);
+        Queue<Throwable> errors = new ConcurrentLinkedQueue<>();
+        try (ForgeScheduler scheduler = new ForgeScheduler(Runnable::run, errors::add)) {
+            scheduler.runAsync(() -> {
+                started.countDown();
+                try { inspectAfterReload.await(3, TimeUnit.SECONDS); }
+                catch (InterruptedException failure) { Thread.currentThread().interrupt(); }
+                obsoleteWorkerIsCurrent.set(scheduler.isCurrentTask());
+                finished.countDown();
+                throw new IllegalStateException("Old configuration is no longer available");
+            });
+            assertTrue(started.await(3, TimeUnit.SECONDS));
+            scheduler.nextGeneration();
+            inspectAfterReload.countDown();
+            assertTrue(finished.await(3, TimeUnit.SECONDS));
+            assertFalse(obsoleteWorkerIsCurrent.get());
+            assertTrue(scheduler.isCurrentTask(), "The new reload generation remains usable");
+            assertTrue(errors.isEmpty(), "Invalidated work cannot report a stale configuration failure");
+        } finally { inspectAfterReload.countDown(); }
+    }
+
     @Test void reloadInsideMinecraftCallbackCanInitializeNewWebsiteWorkersAndReplies() throws Exception {
         BlockingQueue<Runnable> minecraft = new LinkedBlockingQueue<>();
         CountDownLatch newWebsiteWorker = new CountDownLatch(1);

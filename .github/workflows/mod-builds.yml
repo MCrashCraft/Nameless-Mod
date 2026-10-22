@@ -81,6 +81,32 @@ jobs:
         run: >-
           python3 scripts/fabric_smoke.py quilt '${{ matrix.minecraft }}'
           --work '${{ runner.temp }}/nameless-smoke' --accept-eula --timeout 300
+      - name: Start the packaged Forge mod in a disposable server
+        if: matrix.loader == 'forge'
+        run: >-
+          python3 scripts/forge_smoke.py '${{ matrix.minecraft }}'
+          --work '${{ runner.temp }}/nameless-native' --accept-eula --timeout 300
+      - name: Check the existing Forge 1.20.1 compatibility floor
+        if: matrix.loader == 'forge' && matrix.minecraft == '1.20.1'
+        run: >-
+          python3 scripts/forge_smoke.py 1.20.1 --forge-version 47.4.16
+          --work '${{ runner.temp }}/nameless-native' --accept-eula --timeout 300
+      - name: Start the packaged NeoForge mod in a disposable server
+        if: matrix.loader == 'neoforge'
+        run: >-
+          python3 scripts/neoforge_smoke.py '${{ matrix.minecraft }}'
+          --work '${{ runner.temp }}/nameless-native' --accept-eula --timeout 300
+      - name: Preserve native loader startup receipts
+        if: always() && matrix.loader != 'fabric'
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: startup-${{ matrix.loader }}-${{ matrix.minecraft }}
+          path: |
+            ${{ runner.temp }}/nameless-native/**/result.json
+            ${{ runner.temp }}/nameless-native/**/smoke.log
+            ${{ runner.temp }}/nameless-native/**/installer.log
+          if-no-files-found: ignore
+          retention-days: 14
       - name: Preserve isolated startup receipts
         if: always() && matrix.loader == 'fabric'
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7

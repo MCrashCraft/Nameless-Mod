@@ -77,7 +77,7 @@ public final class NamelessFabricMod implements DedicatedServerModInitializer {
         if (!server.isSameThread()) { server.execute(this::reload); return; }
         loaded = false;
         try {
-            plugin.unload(); scheduler.nextGeneration(); plugin.load(); audiences.refreshPlayers(); loaded = true;
+            scheduler.nextGeneration(); plugin.unload(); plugin.load(); audiences.refreshPlayers(); loaded = true;
             LOGGER.info("NamelessMC configuration reloaded; website configured={}", configured());
         } catch (RuntimeException error) {
             plugin.logger().logException(error);
