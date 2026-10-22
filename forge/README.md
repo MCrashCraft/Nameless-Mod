@@ -1,8 +1,8 @@
-# NamelessMC Forge — Unofficial
+# NamelessMC Mod for Forge
 
-**0.2.0 — validation in progress** · Exact-version native Forge builds
+**0.2.0** · Server-only integration · Exact-version native Forge builds
 
-The new build targets cover published Forge releases within Minecraft **1.20.1–26.3**. See [coverage and limitations](../compatibility/README.md) and the build workflow for actual results. The detailed 0.1.1 checks below are historical evidence for that earlier 1.20.1 release, not certification of every new target.
+Native builds cover published Forge releases within Minecraft **1.20.1–26.3**. Use the [release downloads](https://github.com/MCrashCraft/Nameless-Mod/releases), [coverage matrix](../compatibility/README.md) and [validation results](../compatibility/VALIDATION.md) to select an exact target. Forge has no published loader for Minecraft 1.20.5 or 1.21.2.
 
 A server-only Forge port of the shared [NamelessMC server plugin](https://github.com/NamelessMC/Nameless-Plugin). It connects a Minecraft server to a compatible NamelessMC v2 website through the website's API.
 
@@ -59,23 +59,21 @@ The normal commands also have `namelessforge:` aliases, for example `/namelessfo
 
 `/webinfo <username>` and website-name completion require `namelessmc.command.userinfo.others`, which defaults to operator level 2. This staff permission also enables detailed profile fields. Ordinary players use `/webinfo` with no arguments and do not receive private custom profile fields.
 
-## Feature limits in this beta
+## Feature availability
 
 The Bukkit-only PlaceholderAPI integration and the Bukkit user-sync whitelist/ban policy have not been ported. The shared `sync-ban-to-website` option has no Forge ban-event hook. Those inherited configuration keys do not enable those features on Forge. This port makes no automatic whitelist or ban-policy changes.
 
 Optional Store and Websend command/log integrations remain disabled by default. Store settings live in `modules.yaml`, separately from the API credentials in `main.yaml`. Store delivery checks the actual synchronous server-command completion before acknowledging a delivery to the website; accepting or queuing a command alone is insufficient. It also journals deliveries so a failed website acknowledgment can be retried without granting the item again. Failed or interrupted deliveries remain held for manual review. This is not a guarantee of exactly-once delivery across a game-server/website crash boundary, or of completion of a mod command's later asynchronous work. See the Store setup and recovery instructions in [CONFIGURATION.md](CONFIGURATION.md).
 
-Store execution passed an isolated Forge runtime against a mock website. The same release subsequently connected to a real Store website on the development server and completed an automatic empty-queue fetch. Real paid-order fulfillment remains unverified; Websend has not received equivalent runtime coverage. Do not point a development consumer at the public Store connection's paid queue. Bukkit-specific placeholder leaderboards and plugin hooks are not Forge features.
+Store fulfillment was exercised against a mock website in the earlier 0.1.1 Forge release; its historical validation also included a real-website empty-queue fetch. Those checks do not certify real paid-order fulfillment or every 0.2.0 target. Websend has not received equivalent runtime coverage. Keep development consumers on separate test connections. Detailed historical results are in [CHANGELOG.md](CHANGELOG.md).
 
-## Historical 0.1.1 verification
+## Validation
 
-Version 0.1.1 passed **43 automated tests**, covering scheduler/reload boundaries, API and timer hardening, LuckPerms group semantics, permissions, command argument policy, rich-message conversion, Store command results, identity validation and durable receipt recovery. The profile-privacy regressions verify that denied named lookups send no HTTP, private profile notes stay hidden from self-service views, and detailed views/name completion require the staff permission.
+Every published Forge target in version 0.2.0 passed its native 46-test suite and package audit. Packaged-JAR checks exercise initialization, status, overlapping help/reload commands and shutdown using the exact game and loader in a disposable world. The [validation table](../compatibility/VALIDATION.md) records each tested artifact hash.
 
-The exact 0.1.1 release JAR (`SHA-256: 5999f8bd33837a135068593c60e3718f90844c40953e1db6cd2a11ecee6c9f61`) also passed an isolated, loopback-only Forge 47.4.16 / Java 17 runtime with LuckPerms 5.4.102. Actual scoreboard changes and durable `EXECUTED` receipts were observed before the mock website returned a successful acknowledgment. An unknown command and an offline customer's online-only command received no acknowledgment. Duplicate pending IDs, an acknowledgment outage, configuration reload and a clean restart across two owned JVMs did not grant the scoreboard reward again; acknowledgment recovered without a reload. Both JVMs stopped cleanly. These controlled tests used a disposable world and a mock Store, with no paid order, real website, player join, existing-world edit or public/development-server change.
+Forge 1.21 and 1.21.9 have independently reproduced configuration-watcher shutdown limitations, including empty-mod control cases. Their unassisted process-exit checks remain failed; see [known loader limitations](../compatibility/KNOWN-ISSUES.md). Native unit-test success does not override those results.
 
-The 0.1.0 release JAR also passed isolated, headless Forge 47.4.16 tests both with LuckPerms 5.4.102 and without LuckPerms. A local mock website exercised API connection, configuration reload, server-data sending, website outage/recovery and clean shutdown. Console commands remained responsive during the simulated outage. These tests did not contact a real website.
-
-The exact 0.1.1 release completed startup in the 496-JAR MCrashCraft development server, preserving the other 495 JAR hashes and loading all 33 expected dimensions. The settled empty-server sample measured 20 TPS; the API was connected and LuckPerms available. Store connection 1 was then enabled with a one-minute interval, and its first automatic fetch succeeded with zero pending commands and no Store warnings. Private credentials remained outside the release. No client gameplay performance, real paid purchase, website account registration, account linking, website group synchronization or player join is claimed by these checks. This README does not claim installation on a public server.
+These checks do not establish real purchases, player logins or compatibility with every other mod. Earlier 0.1.0 and 0.1.1 mock-website and Store results are preserved in the [changelog](CHANGELOG.md) as historical evidence.
 
 ## Build from source
 
@@ -92,6 +90,6 @@ For Minecraft 1.21 and later, the native JUnit suite requires initialized Forge 
 
 ## Source and licensing
 
-Distributed under **GPL-3.0** with the original license and corresponding source. The vendored Nameless Java API retains its LGPL-3.0 license; the Kyori event API and other bundled libraries retain their own notices and licenses. The mod JAR includes dependency license material under `META-INF/licenses/`.
+Distributed under [GPL-3.0](../LICENSE) with the original license and corresponding source. The vendored Nameless Java API retains its LGPL-3.0 license; the Kyori event API and other bundled libraries retain their own notices and licenses. The mod JAR includes dependency license material under `META-INF/licenses/`.
 
-[UPSTREAM-NOTICE.md](UPSTREAM-NOTICE.md) records exact upstream commits and provenance. See [CHANGELOG.md](CHANGELOG.md) for this port's changes. This is a new Forge project and must not be represented as an official NamelessMC release.
+[UPSTREAM-NOTICE.md](UPSTREAM-NOTICE.md) records exact upstream commits and provenance. See [CHANGELOG.md](CHANGELOG.md) for release changes. This is an independently maintained port and is not an official NamelessMC release.

@@ -1,8 +1,21 @@
-# NamelessMC Mods
+# NamelessMC Mod
 
-Server-only NamelessMC integration for modded Minecraft. This branch contains native Forge, NeoForge and Fabric adapters, plus the Fabric-compatible route for Quilt. Standalone Bukkit, Spigot, Paper, BungeeCord, Velocity and Sponge plugin projects are removed. The cash-exchange addon is also excluded.
+Connect a modded Minecraft server to your NamelessMC website. Register and link accounts in game, deliver notifications, synchronize permission groups and fulfill Store orders through a server-only integration for **Forge, NeoForge, Fabric and Quilt**.
 
-The mods connect a server to an existing NamelessMC website, with account commands, optional LuckPerms integration, notifications and optional website modules including Store delivery. They add no blocks or items, and clients do not need this mod.
+[Download guide](RELEASES.md) · [GitHub Releases](https://github.com/MCrashCraft/Nameless-Mod/releases) · [Configuration](forge/CONFIGURATION.md) · [Compatibility](compatibility/README.md) · [Validation](compatibility/VALIDATION.md) · [License](LICENSE)
+
+Players do not need to install the mod. It adds no blocks or items. This is an independently maintained, unofficial port of the [NamelessMC server integration](https://github.com/NamelessMC/Nameless-Plugin).
+
+## Features
+
+- Website account registration, Minecraft account verification, notifications and player reports.
+- Optional join messages, website announcements and server-data updates.
+- Optional LuckPerms group synchronization using effective memberships and applicable contexts.
+- Permission-aware account information and namespaced commands that preserve commands owned by other mods.
+- Optional Store fulfillment with synchronous command-result checks and a durable delivery journal.
+- Website requests run away from the server tick thread; reload and shutdown invalidate obsolete work.
+
+Periodic website features and optional module executors start disabled. API URL and key defaults are blank; configure the connection privately after installation.
 
 ## Loader and Minecraft versions
 
@@ -13,13 +26,24 @@ The mods connect a server to an existing NamelessMC website, with account comman
 | [Fabric](fabric/) | Native Fabric server events; matching Fabric API required. |
 | Quilt | Uses the exact matching Fabric-compatible JAR, with separate Quilt startup validation. |
 
-The requested range is **every stable Minecraft release from 1.20.1 through 26.3**. Each artifact requires one exact Minecraft release. [Coverage and limitations](compatibility/README.md) distinguish published loader availability, successful builds and runtime checks. Forge has no published builds for Minecraft 1.20.5 or 1.21.2. Some selected NeoForge loaders are beta releases.
+The version matrix covers **every stable Minecraft release from 1.20.1 through 26.3**. Each artifact requires one exact Minecraft release. [Coverage and limitations](compatibility/README.md) distinguish published loader availability, successful builds and runtime checks. Forge has no published builds for Minecraft 1.20.5 or 1.21.2. Some selected NeoForge loaders are beta releases.
 
-Version **0.2.0** has **67 locally compiled artifacts**, each passing all 46 native unit assertions and its package audit. Exact packaged-server checks completed with **88 clean results across 90 published loader combinations**, with two failed Forge shutdown checks documented below. Consult the [local validation table](compatibility/VALIDATION.md) for exact versions, artifact hashes and limits. These checks do not certify real website purchases, player logins or compatibility with every other mod. The [build workflow](https://github.com/MCrashCraft/Nameless-Mod/actions/workflows/mod-builds.yml) can repeat the checks when GitHub Actions is available; no cloud success is claimed.
+Version **0.2.0** has **67 locally compiled artifacts**, each passing all 46 native tests and its package audit. Exact packaged-server checks completed with **88 clean results across 90 published loader combinations**, with two failed Forge shutdown checks documented below. Consult the [validation table](compatibility/VALIDATION.md) for exact versions, artifact hashes and limits. These checks do not certify real website purchases, player logins or compatibility with every other mod. The [build workflow](https://github.com/MCrashCraft/Nameless-Mod/actions/workflows/mod-builds.yml) can repeat the checks when GitHub Actions is available; no cloud success is claimed.
 
 Forge 1.21 and 1.21.9 have reproduced configuration-watcher shutdown limitations, including empty-mod control cases. They remain failed unassisted process-exit checks; see [known loader limitations](compatibility/KNOWN-ISSUES.md).
 
-## Build
+## Installation
+
+1. Download the JAR for the server's **exact Minecraft version and loader** from [Releases](https://github.com/MCrashCraft/Nameless-Mod/releases). Quilt uses the matching Fabric-compatible JAR.
+2. Put that JAR in the server's `mods` directory. Fabric and Quilt also require the corresponding Fabric API listed in the [version matrix](compatibility/targets.json). Install one NamelessMC loader variant per server.
+3. Start the server once, then enter the website API URL, API key and Minecraft server ID in `config/namelessforge/main.yaml`.
+4. Run `/nlpl reload`, then `/namelessforge:status` as an operator. Enable optional website features only when their website modules and settings are ready.
+
+Use Java 17 for Minecraft 1.20.1–1.20.4, Java 21 for 1.20.5–1.21.11, and Java 25 for 26.x. The matching Minecraft loader must also be installed. LuckPerms is optional and must match the server platform.
+
+The [configuration guide](forge/CONFIGURATION.md) covers commands, permissions, privacy and Store setup across the adapters. The mod ID and configuration directory remain `namelessforge` across loaders. Keep real website credentials and private endpoints in server configuration, and back up the world and private configuration before changing Minecraft version or loader.
+
+## Build from source
 
 Install Python 3.10+ and JDKs 17, 21 and 25. From the repository root:
 
@@ -37,14 +61,6 @@ Forge 1.21 and later run the native unit suite after the real Forge loader initi
 
 Outputs are isolated under `<loader>/build/<minecraft>/libs/`. Install the final `namelessmc-...-0.2.0.jar`, not a `slim`, `dev` or sources artifact. Complete corresponding source ZIPs are under `distributions/` and contain all shared and loader projects needed to rebuild. The build driver audits packaged metadata, licenses and prohibited bundled content.
 
-## Installation and private configuration
-
-Install only the artifact matching the server's Minecraft version and loader in its `mods` directory. Fabric-compatible servers also need the corresponding Fabric API. Do not install multiple NamelessMC loader variants together.
-
-After first startup, configure the private connection in `config/namelessforge/main.yaml`. Connection URL and API-key defaults are blank. Real website credentials and private endpoints belong only in server configuration. Optional website features require their corresponding website modules and settings. The [configuration reference](forge/CONFIGURATION.md) covers account, privacy, permissions and Store options shared by the adapters.
-
-The mod ID and configuration directory remain `namelessforge` across loaders so configuration can be retained when moving a server. Back up the world and private configuration before changing loader or Minecraft version.
-
 ## License and attribution
 
-[GNU GPL version 3 or later](LICENSE). Required shared NamelessMC code remains under `forge/vendor/nameless-plugin/`; the Java API and other dependencies retain their individual license notices. See [upstream attribution](forge/UPSTREAM-NOTICE.md) and [dependency licenses](forge/third-party-licenses/). Original upstream Git history is preserved. This is an independently maintained mod port.
+[GNU GPL version 3 or later](LICENSE). Shared NamelessMC code is under `forge/vendor/nameless-plugin/`; the Java API and other dependencies retain their individual license notices. Complete corresponding source accompanies the release artifacts. See [upstream attribution](forge/UPSTREAM-NOTICE.md) and [dependency licenses](forge/third-party-licenses/). Original upstream Git history is preserved.

@@ -1,5 +1,23 @@
 # Changelog
 
+## 0.2.0
+
+Native server adapters for Forge, NeoForge and Fabric, with the same Fabric-compatible JAR tested separately on Quilt. Exact-version builds cover the 23 stable Minecraft releases from 1.20.1 through 26.3 where each loader is published.
+
+### Added
+
+- Shared Minecraft bindings for version-specific command callbacks, permissions, profile names and native rich-chat codecs.
+- Exact-target build tooling, complete corresponding-source archives and packaged metadata/license audits.
+- Native lifecycle handling across all three adapters, including reload and shutdown guards for queued work.
+- Cross-version rich-chat safety and scheduler regression coverage, bringing each native suite to 46 tests.
+- Separate packaged-server status, overlapping help/reload and shutdown checks for Fabric and Quilt.
+
+### Validation
+
+All 67 distinct artifacts passed the 46-test suite and package audit. The 90 published loader combinations produced 88 clean packaged-runtime results. Forge 1.21 and 1.21.9 retain independently reproduced configuration-watcher shutdown limitations; those checks remain failed unassisted exits. See the [validation table](../compatibility/VALIDATION.md) and [known loader limitations](../compatibility/KNOWN-ISSUES.md) for exact versions and hashes.
+
+API connection defaults remain blank, optional modules remain disabled by default, and the configuration directory remains `config/namelessforge/` across loaders. These checks do not certify real purchases, player logins or arbitrary mod combinations.
+
 ## 0.1.1 beta
 
 Store fulfillment correction for the unofficial Forge 1.20.1 port. The exact 0.1.1 build passed 43 automated tests, an isolated Forge runtime against a mock Store, development-server startup and a real-website automatic empty-queue fetch. Real paid-order fulfillment remains unverified; the checks recorded under 0.1.0 apply to that earlier release.

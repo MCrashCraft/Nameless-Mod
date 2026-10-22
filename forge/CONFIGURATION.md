@@ -1,6 +1,6 @@
-# Configuring NamelessMC Forge 0.1.1
+# Configuring NamelessMC Mod 0.2.0
 
-This guide covers the unofficial server-only Forge 1.20.1 port. Configuration lives under **`config/namelessforge/` relative to the server's working directory**. It is separate from a world's `serverconfig` folder.
+This guide covers the shared configuration for the Forge, NeoForge and Fabric-compatible server adapters. Configuration lives under **`config/namelessforge/` relative to the server's working directory**, including on Quilt. The same directory name is retained across loaders. It is separate from a world's `serverconfig` folder.
 
 ## Connect your website
 
@@ -51,7 +51,7 @@ Configured durations use ISO-8601 strings, such as `PT30S` for 30 seconds or `PT
 
 For the newer group-sync endpoint, the website must be NamelessMC 2.1.0 or later. Select the appropriate group-sync server under **StaffCP → Integrations → Minecraft → Minecraft Servers**, and configure mappings under **StaffCP → Configuration → API → Group sync**. This port sends Minecraft groups to the website; it does not assign LuckPerms groups from website ranks.
 
-The LuckPerms adapter uses effective inherited groups and applicable query contexts instead of sending every raw inheritance node. Install the official Forge LuckPerms build if you need this integration. The compatibility target used for this port is **LuckPerms Forge 5.4.102**. LuckPerms is optional and is not bundled into the mod.
+The LuckPerms adapter uses effective inherited groups and applicable query contexts instead of sending every raw inheritance node. Install the official LuckPerms build matching your server platform if you need this integration. The earlier Forge 1.20.1 integration checks used **LuckPerms Forge 5.4.102**; that result does not certify every loader/version combination. LuckPerms is optional and is not bundled into the mod.
 
 The data sender does not replace NamelessMC's separate server-ping configuration. Configure website server ping/status independently where the website requires it.
 
@@ -110,7 +110,7 @@ LuckPerms checks use these existing NamelessMC permission nodes. An explicit Luc
 
 ## Optional website modules
 
-Store command execution, Websend command execution and Websend log sending are disabled by default. Their settings belong in **`config/namelessforge/modules.yaml`**, not `main.yaml`. Enable them only when the matching website module exists and its configuration is deliberately prepared. Store passed an isolated Forge runtime against a mock website, followed by a real-website automatic empty-queue fetch on the development server. Real paid-order fulfillment remains unverified. Websend has not received equivalent runtime coverage.
+Store command execution, Websend command execution and Websend log sending are disabled by default. Their settings belong in **`config/namelessforge/modules.yaml`**, not `main.yaml`. Enable them only when the matching website module exists and its configuration is ready. Historical 0.1.1 Forge validation covered a mock Store and a real-website empty-queue fetch. Real paid-order fulfillment and equivalent Websend runtime coverage remain unverified; consult the [version-specific validation results](../compatibility/VALIDATION.md).
 
 ### Store fulfillment
 
@@ -128,7 +128,7 @@ store:
 
 Save and run `/nlpl reload`. The generated release defaults remain `connection-id: 0` and `enabled: false`. Keep Websend execution/log sending disabled unless you are separately setting up that module. **Use one running consumer per Store connection.** A development server must use a separate test connection or an isolated mock; it must not consume the public server's paid queue.
 
-Store fulfillment uses privileged server-console commands supplied by the trusted Store configuration. Restrict who can edit Store products, commands and API settings. Use commands whose game-side work completes synchronously, such as a direct item grant or scoreboard update. Version 0.1.1 executes each prepared command immediately on the server thread and checks Brigadier's actual completion callback before acknowledging it. A numeric result of zero can still be successful; queuing, parsing, a canceled Forge command event, an exception or a failed execution is not successful delivery. A mod command that returns success before its own asynchronous job finishes needs a separate receipt or manual verification; this adapter cannot prove that later job completed.
+Store fulfillment uses privileged server-console commands supplied by the trusted Store configuration. Restrict who can edit Store products, commands and API settings. Use commands whose game-side work completes synchronously, such as a direct item grant or scoreboard update. The executor runs each prepared command immediately on the server thread and checks Brigadier's actual completion callback before acknowledging it. A numeric result of zero can still be successful; queuing, parsing, a canceled command event, an exception or a failed execution is not successful delivery. A mod command that returns success before its own asynchronous job finishes needs a separate receipt or manual verification; this adapter cannot prove that later job completed.
 
 Only `{username}` and `{uuid}` identity substitutions are supported. A substituted username must be a valid Java Minecraft name. Online UUID resolution uses the exact Minecraft identity, without fuzzy-name fallback; `{uuid}` is the player's actual game UUID even when the website uses offline UUIDs. UUID substitutions use the canonical dashed UUID format; product commands that expect an undashed identifier must be reviewed. Offline UUID substitutions require a canonical customer UUID. Missing identities, unresolved simple placeholders, empty or multiline commands, NUL characters and commands over 4,096 characters are held rather than dispatched. Ordinary JSON/NBT braces do not themselves count as an unresolved identity placeholder.
 
@@ -155,25 +155,21 @@ The optional Store commands are commented out in `commands.yaml`:
 
 The credit commands are separate from product fulfillment. You do **not** need to uncomment `changecredits` or `credits` to run the Store command executor. Leave them disabled unless website-credit management is separately intended. The Suggestions command also needs the corresponding website module. Enabling a command does not install its website module. Store and Websend are not required for ordinary registration, linking or notifications. The new durable Store receipt path does not apply to the older Websend executor.
 
-## Inherited options that do not operate on Forge
+## Platform-specific options
 
-The shared template retains settings used by other upstream platforms. This Forge beta does not implement:
+The shared template retains settings used by other upstream platforms. The native mod adapters do not implement:
 
 - Bukkit PlaceholderAPI, placeholder retrieval, or Bukkit placeholder leaderboards.
 - `user-sync`, including website-driven whitelist changes, bans and pardons.
-- `sync-ban-to-website`, because no Forge ban-event adapter is registered.
+- `sync-ban-to-website`, because no native ban-event adapter is registered.
 - Bukkit-only maintenance/plugin hooks.
 
-Changing those inherited keys does not activate those features on Forge. This mod does not automatically change a server's whitelist or ban policy.
+Changing those inherited keys does not activate those features. The mod does not automatically change a server's whitelist or ban policy.
 
 ## Testing and troubleshooting
 
-Version 0.1.1 passed **43 automated tests**, covering scheduling/cancellation, bounded API behavior and core hardening, effective LuckPerms group resolution, command/permission policy, native Minecraft 1.20.1 rich-message conversion, profile privacy, Store command completion, identity validation and durable receipt recovery. Named lookups denied by the staff permission queue no HTTP work; ordinary self views hide private custom fields, while the privileged view remains available.
+Version 0.2.0 has 67 native artifacts, each passing 46 tests and a package audit. The suite covers scheduling and reload boundaries, bounded API behavior, permission policy, native rich-chat conversion, profile privacy, Store command completion and durable receipt recovery. The [validation table](../compatibility/VALIDATION.md) records exact packaged-server results; the [known loader limitations](../compatibility/KNOWN-ISSUES.md) document failed Forge 1.21 and 1.21.9 shutdown checks.
 
-The exact 0.1.1 release JAR (`SHA-256: 5999f8bd33837a135068593c60e3718f90844c40953e1db6cd2a11ecee6c9f61`) passed isolated Forge 47.4.16 / Java 17 runtime checks with LuckPerms 5.4.102 and a loopback mock Store on connection 1. A real scoreboard reward and its durable `EXECUTED` receipt existed before the mock returned a successful acknowledgment. Invalid and online-only/offline commands were not acknowledged. Repeated pending IDs, a simulated acknowledgment outage, reload and a clean restart across two owned JVMs preserved the reward count; acknowledgment later recovered without re-execution or a reload. Both JVMs stopped cleanly. The fixture did not use a real website, create paid orders, join a player, edit an existing world or change the public/development server. These results do not guarantee exactly-once delivery through every possible crash boundary or completion of a mod command's later asynchronous work.
-
-The 0.1.0 release JAR also passed isolated Forge 47.4.16 runtime tests with LuckPerms 5.4.102 and without LuckPerms. A local mock website exercised connection, reload, server-data sending, outage/recovery and clean shutdown.
-
-The exact 0.1.1 JAR subsequently passed development-server startup with all 496 JAR hashes and 33 expected dimension IDs matching, game/voice ports available, LuckPerms detected and the API connected. The settled empty-server sample was 20 TPS. Store connection 1 was enabled with `PT1M` polling, and the native executor logged a successful automatic fetch with zero pending commands and no Store warnings. No real purchase was created for this validation. These checks do not establish real paid-order fulfillment, website login/account mutation, client gameplay performance or public deployment.
+Earlier Forge releases were also checked against a mock website and mock Store; their historical results are in the [changelog](CHANGELOG.md). A local build, startup or empty-queue fetch does not establish real paid-order fulfillment. Test each intended website feature after configuring the private connection, using a separate Store test connection when applicable.
 
 For connection problems, check the API URL/key/server ID in StaffCP and on the server, the website's compatible NamelessMC version, website reachability from the server, and the cached status after reload. Keep website requests off the tick thread; do not work around a connection problem by enabling unrelated access-policy or command-execution options. Real-website registration, linking and optional modules still need testing after private API setup.

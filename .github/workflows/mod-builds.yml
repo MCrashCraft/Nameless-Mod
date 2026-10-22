@@ -2,7 +2,7 @@ name: Exact Minecraft mod builds
 
 on:
   push:
-    branches: [forge-1.20.1]
+    branches: [main, forge-1.20.1]
     paths:
       - 'forge/**'
       - 'fabric/**'
@@ -13,7 +13,7 @@ on:
       - 'compatibility/**'
       - '.github/workflows/mod-builds.yml'
   pull_request:
-    branches: [forge-1.20.1]
+    branches: [main]
   workflow_dispatch:
 
 permissions:

@@ -1,6 +1,6 @@
 # NamelessMC NeoForge
 
-Native server-only NeoForge adapter, version 0.2.0. It uses the shared NamelessMC core, Java API and Minecraft adapter sources; it contains no cash-exchange addon.
+Native server-only NeoForge adapter, version 0.2.0. It uses the shared NamelessMC core, Java API and Minecraft adapter sources. See the [download guide](../RELEASES.md) for exact Minecraft and loader versions.
 
 Build one exact published target with Java 25 running Gradle 9.2.1:
 
