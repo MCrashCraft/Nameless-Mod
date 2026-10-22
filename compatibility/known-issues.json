@@ -1,0 +1,37 @@
+{
+  "recorded_utc": "2026-10-22T13:11:32Z",
+  "issues": [
+    {
+      "id": "forge-1.21-nightconfig-shutdown",
+      "loader": "forge",
+      "minecraft": "1.21",
+      "loader_version": "51.0.33",
+      "nightconfig_version": "3.7.3",
+      "environment": "Windows, JDK 21.0.12.1",
+      "artifact_sha256": "a4894ad23919d51f9beaf26e695fbaea3219b97450a1e201c40d18659a8ee986",
+      "native_tests_passed": 46,
+      "mod_startup_commands_reload_observed": true,
+      "unassisted_shutdown_passed": false,
+      "upstream_control_reproduced": true,
+      "no_mod_control": {
+        "minecraft": "1.21",
+        "loader": "forge",
+        "loader_version": "51.0.33",
+        "java_major": 21,
+        "mods_present": [],
+        "nameless_loaded": false,
+        "started": true,
+        "all_dimensions_saved": true,
+        "stop_grace_seconds": 90,
+        "natural_exit_code": null,
+        "forced_termination": true,
+        "stdout_complete": true,
+        "official_argfile_sha256": "a8136051fce93cbe15ad90aa8654d85c080bfe65f7fc1d218b83fe939c82e8be",
+        "config_was_fresh": true,
+        "world_was_fresh": true
+      },
+      "upstream_report": "https://github.com/neoforged/NeoForge/issues/1626",
+      "upstream_neoforge_correction": "https://github.com/neoforged/NeoForge/pull/1757"
+    }
+  ]
+}

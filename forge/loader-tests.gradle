@@ -6,6 +6,12 @@ def gameForLoaderTests = providers.gradleProperty('minecraftVersion')
 def needsNativeLoader = gameForLoaderTests.startsWith('26.') || gameForLoaderTests == '1.21' ||
         gameForLoaderTests.startsWith('1.21.')
 if (!needsNativeLoader) return
+if (gameForLoaderTests == '1.21') {
+    // Forge's own generated POM selects 5.0.4. ModLauncher 10.2.1's transitive
+    // alpha dependency otherwise wins Gradle conflict resolution and exposes
+    // the wrong automatic module name (joptsimple instead of jopt.simple).
+    configurations.testRuntimeClasspath.resolutionStrategy.force 'net.sf.jopt-simple:jopt-simple:5.0.4'
+}
 
 def testBus7 = gameForLoaderTests.startsWith('26.') ||
         (gameForLoaderTests.startsWith('1.21.') && gameForLoaderTests.tokenize('.')[2].toInteger() >= 6)
@@ -40,8 +46,10 @@ tasks.register('generateLoaderTestHarness') {
     doLast {
         def constructor = testBus7 ? '''public NamelessLoaderTests(net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext context) {
         net.minecraftforge.event.server.ServerStartedEvent.BUS.addListener(this::run);
+        net.minecraftforge.event.server.ServerStoppedEvent.BUS.addListener(this::stopped);
     }''' : '''public NamelessLoaderTests() {
         net.minecraftforge.common.MinecraftForge.EVENT_BUS.addListener(this::run);
+        net.minecraftforge.common.MinecraftForge.EVENT_BUS.addListener(this::stopped);
     }'''
         def target = generatedLoaderTests.get().file('dev/mcrashcraft/namelesstest/NamelessLoaderTests.java').asFile
         target.parentFile.mkdirs()
@@ -137,6 +145,11 @@ tasks.matching { it.name == 'runTestServer' }.configureEach {
     dependsOn 'prepareNativeLoaderTest'
     timeout = java.time.Duration.ofMinutes(10)
     maxHeapSize = '2G'
+    if (gameForLoaderTests == '1.21' && providers.gradleProperty('nativeThreadTrace').map { it.toBoolean() }.getOrElse(false)) {
+        logger.lifecycle('Native Forge ThreadStart tracing enabled for the isolated test JVM')
+        jvmArgs('-XX:StartFlightRecording=filename=' + layout.buildDirectory.file('loader-junit/thread-starts.jfr').get().asFile.absolutePath
+                + ',settings=profile,dumponexit=true,maxsize=64m,jdk.ThreadStart#enabled=true,jdk.ThreadStart#stackTrace=true')
+    }
     doFirst {
         def nativeClasspath = classpath.asPath
         layout.buildDirectory.file('loader-junit/classpath.txt').get().asFile.setText(nativeClasspath, 'UTF-8')

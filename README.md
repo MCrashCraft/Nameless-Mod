@@ -17,6 +17,8 @@ The requested range is **every stable Minecraft release from 1.20.1 through 26.3
 
 **The multi-version 0.2.0 work is undergoing validation. A selectable target is not a verified compatibility claim.** Consult the [local validation table](compatibility/VALIDATION.md) before installing an artifact. It records the current native test and packaged-server results separately from pending targets. The [build workflow](https://github.com/MCrashCraft/Nameless-Mod/actions/workflows/mod-builds.yml) can repeat those checks when GitHub Actions is available. The earlier Forge 1.20.1 version 0.1.1 passed 43 tests and isolated mock-website/server checks; those historical results do not certify every new port.
 
+Forge 1.21 has a reproduced upstream configuration-watcher shutdown hang, including in a fresh server with no mods. It remains a failed unassisted process-exit check; see [known loader limitations](compatibility/KNOWN-ISSUES.md).
+
 ## Build
 
 Install Python 3.10+ and JDKs 17, 21 and 25. From the repository root:

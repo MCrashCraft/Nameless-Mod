@@ -3,6 +3,7 @@ package dev.mcrashcraft.namelesstest;
 
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.event.server.ServerStartedEvent;
+import net.minecraftforge.event.server.ServerStoppedEvent;
 import org.junit.platform.engine.discovery.DiscoverySelectors;
 import org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder;
 import org.junit.platform.launcher.core.LauncherFactory;
@@ -23,6 +24,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @Mod("namelesstest")
 public final class NamelessLoaderTests {
     private final AtomicBoolean started = new AtomicBoolean();
+    private volatile int resultExitCode = 1;
 
     @@CONSTRUCTOR@@
 
@@ -60,6 +62,9 @@ public final class NamelessLoaderTests {
                 Path temporary = summaryPath.resolveSibling(summaryPath.getFileName() + ".tmp");
                 Files.writeString(temporary, result, StandardCharsets.UTF_8);
                 Files.move(temporary, summaryPath, StandardCopyOption.REPLACE_EXISTING);
+                resultExitCode = summary.getTestsFoundCount() == 46 && summary.getTestsSucceededCount() == 46
+                        && summary.getTestsFailedCount() == 0 && summary.getTestsAbortedCount() == 0
+                        && summary.getTestsSkippedCount() == 0 && summary.getContainersFailedCount() == 0 ? 0 : 1;
                 System.out.println("NAMELESS_NATIVE_JUNIT_COMPLETE " + result);
             } catch (Throwable error) {
                 // No completion summary means Gradle must fail, even after a clean server shutdown.
@@ -71,5 +76,27 @@ public final class NamelessLoaderTests {
         }, "Nameless native JUnit fixture");
         worker.setDaemon(true);
         worker.start();
+    }
+
+    private void stopped(ServerStoppedEvent event) {
+        // Forge's configuration-watcher library can outlive the real server. End
+        // this disposable JUnit process only AFTER cleanup and server-thread exit.
+        // Production packaged-JAR smoke tests do not contain or use this hook.
+        Thread serverThread = Thread.currentThread();
+        Thread exiting = new Thread(() -> {
+            try {
+                serverThread.join(30_000);
+                if (serverThread.isAlive()) {
+                    System.err.println("NAMELESS_NATIVE_JUNIT_SERVER_SHUTDOWN_INCOMPLETE");
+                    System.exit(2);
+                }
+                System.exit(resultExitCode);
+            } catch (InterruptedException interrupted) {
+                Thread.currentThread().interrupt();
+                System.exit(2);
+            }
+        }, "Nameless native JUnit process cleanup");
+        exiting.setDaemon(true);
+        exiting.start();
     }
 }

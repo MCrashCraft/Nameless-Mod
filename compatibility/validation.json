@@ -1,9 +1,9 @@
 {
-  "recorded_utc": "2026-10-22T12:09:29+00:00",
+  "recorded_utc": "2026-10-22T13:17:12+00:00",
   "mod_version": "0.2.0",
-  "native_builds_and_current_suites_passed": 31,
+  "native_builds_and_current_suites_passed": 40,
   "distinct_artifacts": 67,
-  "clean_loader_startups": 44,
+  "clean_loader_startups": 32,
   "available_loader_combinations": 90,
   "targets": [
     {
@@ -40,10 +40,10 @@
       "loader_version": "0.19.5",
       "java_major": 17,
       "artifact": "namelessmc-fabric-1.20.1-0.2.0.jar",
-      "artifact_sha256": "cf8963b439eb555e7b107fc38f40befed62a2d3572bd690525ace7aa2854d16b",
-      "native_tests": 45,
-      "native_tests_passed": false,
-      "packaged_startup_commands_reload_shutdown_passed": false,
+      "artifact_sha256": "34e4f75e4c8f2d36ff09cf8468033d3b9fee37a2ed494e5087513139689908b2",
+      "native_tests": 46,
+      "native_tests_passed": true,
+      "packaged_startup_commands_reload_shutdown_passed": true,
       "website_integration_verified": false
     },
     {
@@ -53,10 +53,10 @@
       "loader_version": "0.30.1",
       "java_major": 17,
       "artifact": "namelessmc-fabric-1.20.1-0.2.0.jar",
-      "artifact_sha256": "cf8963b439eb555e7b107fc38f40befed62a2d3572bd690525ace7aa2854d16b",
-      "native_tests": 45,
-      "native_tests_passed": false,
-      "packaged_startup_commands_reload_shutdown_passed": false,
+      "artifact_sha256": "34e4f75e4c8f2d36ff09cf8468033d3b9fee37a2ed494e5087513139689908b2",
+      "native_tests": 46,
+      "native_tests_passed": true,
+      "packaged_startup_commands_reload_shutdown_passed": true,
       "website_integration_verified": false
     },
     {
@@ -95,8 +95,8 @@
       "artifact": "namelessmc-fabric-1.20.2-0.2.0.jar",
       "artifact_sha256": "f0c0a5d9fa720a54cc6b5bd0ee1c25c86b6f75dbc429004d430761e3d4d870ea",
       "native_tests": 46,
-      "native_tests_passed": true,
-      "packaged_startup_commands_reload_shutdown_passed": true,
+      "native_tests_passed": false,
+      "packaged_startup_commands_reload_shutdown_passed": false,
       "website_integration_verified": false
     },
     {
@@ -108,8 +108,8 @@
       "artifact": "namelessmc-fabric-1.20.2-0.2.0.jar",
       "artifact_sha256": "f0c0a5d9fa720a54cc6b5bd0ee1c25c86b6f75dbc429004d430761e3d4d870ea",
       "native_tests": 46,
-      "native_tests_passed": true,
-      "packaged_startup_commands_reload_shutdown_passed": true,
+      "native_tests_passed": false,
+      "packaged_startup_commands_reload_shutdown_passed": false,
       "website_integration_verified": false
     },
     {
@@ -147,9 +147,9 @@
       "java_major": 17,
       "artifact": "namelessmc-fabric-1.20.3-0.2.0.jar",
       "artifact_sha256": "039238cddd16c9ec404ace08440b56aa829740a475aa0629a46166f1dc0f1bba",
-      "native_tests": 46,
-      "native_tests_passed": true,
-      "packaged_startup_commands_reload_shutdown_passed": true,
+      "native_tests": 0,
+      "native_tests_passed": false,
+      "packaged_startup_commands_reload_shutdown_passed": false,
       "website_integration_verified": false
     },
     {
@@ -160,9 +160,9 @@
       "java_major": 17,
       "artifact": "namelessmc-fabric-1.20.3-0.2.0.jar",
       "artifact_sha256": "039238cddd16c9ec404ace08440b56aa829740a475aa0629a46166f1dc0f1bba",
-      "native_tests": 46,
-      "native_tests_passed": true,
-      "packaged_startup_commands_reload_shutdown_passed": true,
+      "native_tests": 0,
+      "native_tests_passed": false,
+      "packaged_startup_commands_reload_shutdown_passed": false,
       "website_integration_verified": false
     },
     {
@@ -201,8 +201,8 @@
       "artifact": "namelessmc-fabric-1.20.4-0.2.0.jar",
       "artifact_sha256": "bb383b64661ee8bf63b05dcd2e75cdfa16b02845d4b4ad85a23fa5c9d1b3f08b",
       "native_tests": 46,
-      "native_tests_passed": true,
-      "packaged_startup_commands_reload_shutdown_passed": true,
+      "native_tests_passed": false,
+      "packaged_startup_commands_reload_shutdown_passed": false,
       "website_integration_verified": false
     },
     {
@@ -214,8 +214,8 @@
       "artifact": "namelessmc-fabric-1.20.4-0.2.0.jar",
       "artifact_sha256": "bb383b64661ee8bf63b05dcd2e75cdfa16b02845d4b4ad85a23fa5c9d1b3f08b",
       "native_tests": 46,
-      "native_tests_passed": true,
-      "packaged_startup_commands_reload_shutdown_passed": true,
+      "native_tests_passed": false,
+      "packaged_startup_commands_reload_shutdown_passed": false,
       "website_integration_verified": false
     },
     {
@@ -230,10 +230,10 @@
       "loader_version": "20.5.21-beta",
       "java_major": 21,
       "artifact": "namelessmc-neoforge-1.20.5-0.2.0.jar",
-      "artifact_sha256": null,
-      "native_tests": 0,
-      "native_tests_passed": false,
-      "packaged_startup_commands_reload_shutdown_passed": false,
+      "artifact_sha256": "6b1cc934c799f2c3405d7eeed3928436de5e8e6141c407b78e666440f22808c5",
+      "native_tests": 46,
+      "native_tests_passed": true,
+      "packaged_startup_commands_reload_shutdown_passed": true,
       "website_integration_verified": false,
       "loader_beta": true
     },
@@ -244,8 +244,8 @@
       "loader_version": "0.19.5",
       "java_major": 21,
       "artifact": "namelessmc-fabric-1.20.5-0.2.0.jar",
-      "artifact_sha256": null,
-      "native_tests": 0,
+      "artifact_sha256": "a8a985aa0cbe73d53bd37fa2e4567e967624d5b00fc05cd2c3ff731e2b437e03",
+      "native_tests": 46,
       "native_tests_passed": false,
       "packaged_startup_commands_reload_shutdown_passed": false,
       "website_integration_verified": false
@@ -257,8 +257,8 @@
       "loader_version": "0.30.1",
       "java_major": 21,
       "artifact": "namelessmc-fabric-1.20.5-0.2.0.jar",
-      "artifact_sha256": null,
-      "native_tests": 0,
+      "artifact_sha256": "a8a985aa0cbe73d53bd37fa2e4567e967624d5b00fc05cd2c3ff731e2b437e03",
+      "native_tests": 46,
       "native_tests_passed": false,
       "packaged_startup_commands_reload_shutdown_passed": false,
       "website_integration_verified": false
@@ -283,7 +283,7 @@
       "loader_version": "20.6.144",
       "java_major": 21,
       "artifact": "namelessmc-neoforge-1.20.6-0.2.0.jar",
-      "artifact_sha256": "7a0bcedc62c70ca20da7224813b2a651cd52bf776cd7fedf1fe1cd8b371aee5c",
+      "artifact_sha256": "1d549d9ed9a39395fc130d3098dcf0de5ae3e6c5e9796ebfb1ec1fec7349ecf3",
       "native_tests": 46,
       "native_tests_passed": true,
       "packaged_startup_commands_reload_shutdown_passed": true,
@@ -299,8 +299,8 @@
       "artifact": "namelessmc-fabric-1.20.6-0.2.0.jar",
       "artifact_sha256": "ae26dd5b08e58b3f307d314227f512f09540b7d6891dc4313bd1e7a83015e3c4",
       "native_tests": 46,
-      "native_tests_passed": true,
-      "packaged_startup_commands_reload_shutdown_passed": true,
+      "native_tests_passed": false,
+      "packaged_startup_commands_reload_shutdown_passed": false,
       "website_integration_verified": false
     },
     {
@@ -312,8 +312,8 @@
       "artifact": "namelessmc-fabric-1.20.6-0.2.0.jar",
       "artifact_sha256": "ae26dd5b08e58b3f307d314227f512f09540b7d6891dc4313bd1e7a83015e3c4",
       "native_tests": 46,
-      "native_tests_passed": true,
-      "packaged_startup_commands_reload_shutdown_passed": true,
+      "native_tests_passed": false,
+      "packaged_startup_commands_reload_shutdown_passed": false,
       "website_integration_verified": false
     },
     {
@@ -324,10 +324,12 @@
       "java_major": 21,
       "artifact": "namelessmc-forge-1.21-0.2.0.jar",
       "artifact_sha256": "a4894ad23919d51f9beaf26e695fbaea3219b97450a1e201c40d18659a8ee986",
-      "native_tests": 0,
-      "native_tests_passed": false,
+      "native_tests": 46,
+      "native_tests_passed": true,
       "packaged_startup_commands_reload_shutdown_passed": false,
-      "website_integration_verified": false
+      "website_integration_verified": false,
+      "known_upstream_issue": "forge-1.21-nightconfig-shutdown",
+      "mod_startup_commands_reload_observed": true
     },
     {
       "minecraft": "1.21",
@@ -350,8 +352,8 @@
       "loader_version": "0.19.5",
       "java_major": 21,
       "artifact": "namelessmc-fabric-1.21-0.2.0.jar",
-      "artifact_sha256": null,
-      "native_tests": 0,
+      "artifact_sha256": "c645c456616493df5cb3748abf26f8f601d7f856c59914791d40b49a59847a8b",
+      "native_tests": 46,
       "native_tests_passed": false,
       "packaged_startup_commands_reload_shutdown_passed": false,
       "website_integration_verified": false
@@ -363,8 +365,8 @@
       "loader_version": "0.30.1",
       "java_major": 21,
       "artifact": "namelessmc-fabric-1.21-0.2.0.jar",
-      "artifact_sha256": null,
-      "native_tests": 0,
+      "artifact_sha256": "c645c456616493df5cb3748abf26f8f601d7f856c59914791d40b49a59847a8b",
+      "native_tests": 46,
       "native_tests_passed": false,
       "packaged_startup_commands_reload_shutdown_passed": false,
       "website_integration_verified": false
@@ -376,10 +378,10 @@
       "loader_version": "52.1.20",
       "java_major": 21,
       "artifact": "namelessmc-forge-1.21.1-0.2.0.jar",
-      "artifact_sha256": null,
-      "native_tests": 0,
-      "native_tests_passed": false,
-      "packaged_startup_commands_reload_shutdown_passed": false,
+      "artifact_sha256": "ad5684c7d3ca11120f8aa0ab351d7bff2b6fd6d652bda5329e0f7c5dfebccb01",
+      "native_tests": 46,
+      "native_tests_passed": true,
+      "packaged_startup_commands_reload_shutdown_passed": true,
       "website_integration_verified": false
     },
     {
@@ -403,8 +405,8 @@
       "loader_version": "0.19.5",
       "java_major": 21,
       "artifact": "namelessmc-fabric-1.21.1-0.2.0.jar",
-      "artifact_sha256": null,
-      "native_tests": 0,
+      "artifact_sha256": "0fbead750e1ada6da8cb0559b9d50ae684c345652d4799c39c4cdfd2da1c0a45",
+      "native_tests": 46,
       "native_tests_passed": false,
       "packaged_startup_commands_reload_shutdown_passed": false,
       "website_integration_verified": false
@@ -416,8 +418,8 @@
       "loader_version": "0.30.1",
       "java_major": 21,
       "artifact": "namelessmc-fabric-1.21.1-0.2.0.jar",
-      "artifact_sha256": null,
-      "native_tests": 0,
+      "artifact_sha256": "0fbead750e1ada6da8cb0559b9d50ae684c345652d4799c39c4cdfd2da1c0a45",
+      "native_tests": 46,
       "native_tests_passed": false,
       "packaged_startup_commands_reload_shutdown_passed": false,
       "website_integration_verified": false
@@ -437,7 +439,7 @@
       "artifact_sha256": "e755067f40be2a24dbe643908ecc83cb077cfeffcbcd2244dd354beb17f5506c",
       "native_tests": 46,
       "native_tests_passed": true,
-      "packaged_startup_commands_reload_shutdown_passed": true,
+      "packaged_startup_commands_reload_shutdown_passed": false,
       "website_integration_verified": false,
       "loader_beta": true
     },
@@ -448,10 +450,10 @@
       "loader_version": "0.19.5",
       "java_major": 21,
       "artifact": "namelessmc-fabric-1.21.2-0.2.0.jar",
-      "artifact_sha256": "2d3961332b8bed9492ade9322753b0aba09fdc837ca4bf7667236af9d77eaf8f",
-      "native_tests": 45,
-      "native_tests_passed": false,
-      "packaged_startup_commands_reload_shutdown_passed": false,
+      "artifact_sha256": "c6b99c0c841785eb77c16a3c0f92829ef83699cd79b548add526025e75990ddf",
+      "native_tests": 46,
+      "native_tests_passed": true,
+      "packaged_startup_commands_reload_shutdown_passed": true,
       "website_integration_verified": false
     },
     {
@@ -461,10 +463,10 @@
       "loader_version": "0.30.1",
       "java_major": 21,
       "artifact": "namelessmc-fabric-1.21.2-0.2.0.jar",
-      "artifact_sha256": "2d3961332b8bed9492ade9322753b0aba09fdc837ca4bf7667236af9d77eaf8f",
-      "native_tests": 45,
-      "native_tests_passed": false,
-      "packaged_startup_commands_reload_shutdown_passed": false,
+      "artifact_sha256": "c6b99c0c841785eb77c16a3c0f92829ef83699cd79b548add526025e75990ddf",
+      "native_tests": 46,
+      "native_tests_passed": true,
+      "packaged_startup_commands_reload_shutdown_passed": true,
       "website_integration_verified": false
     },
     {
@@ -474,9 +476,9 @@
       "loader_version": "53.1.16",
       "java_major": 21,
       "artifact": "namelessmc-forge-1.21.3-0.2.0.jar",
-      "artifact_sha256": null,
-      "native_tests": 0,
-      "native_tests_passed": false,
+      "artifact_sha256": "bc2560bffd09f5c80d6a03e43d5aaf7c5046bee4d129484d727491d6892d08fe",
+      "native_tests": 46,
+      "native_tests_passed": true,
       "packaged_startup_commands_reload_shutdown_passed": false,
       "website_integration_verified": false
     },
@@ -490,7 +492,7 @@
       "artifact_sha256": "c9c0c3604762498ef4fd3f8196ab33e9d3d3f83c98040bf3393ab3751a81498d",
       "native_tests": 46,
       "native_tests_passed": true,
-      "packaged_startup_commands_reload_shutdown_passed": true,
+      "packaged_startup_commands_reload_shutdown_passed": false,
       "website_integration_verified": false,
       "loader_beta": false
     },
@@ -501,10 +503,10 @@
       "loader_version": "0.19.5",
       "java_major": 21,
       "artifact": "namelessmc-fabric-1.21.3-0.2.0.jar",
-      "artifact_sha256": "a2d804786a821eb820196e898ec3c92dbf51d65a27bd16c71200044c7993e6c2",
+      "artifact_sha256": "c2f264d64122e20bf728ddb2311f596541ce4dfce8c1812a791efb5361fe91d6",
       "native_tests": 46,
       "native_tests_passed": true,
-      "packaged_startup_commands_reload_shutdown_passed": true,
+      "packaged_startup_commands_reload_shutdown_passed": false,
       "website_integration_verified": false
     },
     {
@@ -514,10 +516,10 @@
       "loader_version": "0.30.1",
       "java_major": 21,
       "artifact": "namelessmc-fabric-1.21.3-0.2.0.jar",
-      "artifact_sha256": "a2d804786a821eb820196e898ec3c92dbf51d65a27bd16c71200044c7993e6c2",
+      "artifact_sha256": "c2f264d64122e20bf728ddb2311f596541ce4dfce8c1812a791efb5361fe91d6",
       "native_tests": 46,
       "native_tests_passed": true,
-      "packaged_startup_commands_reload_shutdown_passed": true,
+      "packaged_startup_commands_reload_shutdown_passed": false,
       "website_integration_verified": false
     },
     {
@@ -543,7 +545,7 @@
       "artifact_sha256": "ee7cc7d44d162de7d08f2e632750726a980520dc322696ea3c46d78dedd97b35",
       "native_tests": 46,
       "native_tests_passed": true,
-      "packaged_startup_commands_reload_shutdown_passed": true,
+      "packaged_startup_commands_reload_shutdown_passed": false,
       "website_integration_verified": false,
       "loader_beta": false
     },
@@ -554,7 +556,7 @@
       "loader_version": "0.19.5",
       "java_major": 21,
       "artifact": "namelessmc-fabric-1.21.4-0.2.0.jar",
-      "artifact_sha256": "c5f90c56d4e360b06967d77b3c4a89f9a45be7d2beaf09a26db9b1ade4611051",
+      "artifact_sha256": "b830177b49de4b9db84b5a8178479a9736119a0d6280ce2352a8e2e038d6ffcb",
       "native_tests": 46,
       "native_tests_passed": true,
       "packaged_startup_commands_reload_shutdown_passed": true,
@@ -567,7 +569,7 @@
       "loader_version": "0.30.1",
       "java_major": 21,
       "artifact": "namelessmc-fabric-1.21.4-0.2.0.jar",
-      "artifact_sha256": "c5f90c56d4e360b06967d77b3c4a89f9a45be7d2beaf09a26db9b1ade4611051",
+      "artifact_sha256": "b830177b49de4b9db84b5a8178479a9736119a0d6280ce2352a8e2e038d6ffcb",
       "native_tests": 46,
       "native_tests_passed": true,
       "packaged_startup_commands_reload_shutdown_passed": true,
@@ -596,7 +598,7 @@
       "artifact_sha256": "c59c12c9070090952cd515e0fab7e2a689736cab0bcf72fac2b37100edc79e31",
       "native_tests": 46,
       "native_tests_passed": true,
-      "packaged_startup_commands_reload_shutdown_passed": true,
+      "packaged_startup_commands_reload_shutdown_passed": false,
       "website_integration_verified": false,
       "loader_beta": false
     },
@@ -609,8 +611,8 @@
       "artifact": "namelessmc-fabric-1.21.5-0.2.0.jar",
       "artifact_sha256": "6165a5c5ce281b2b2fbf02cf5b2de53e77d35c1ee9cdf42d25e01d22e76fc4fc",
       "native_tests": 46,
-      "native_tests_passed": true,
-      "packaged_startup_commands_reload_shutdown_passed": true,
+      "native_tests_passed": false,
+      "packaged_startup_commands_reload_shutdown_passed": false,
       "website_integration_verified": false
     },
     {
@@ -622,8 +624,8 @@
       "artifact": "namelessmc-fabric-1.21.5-0.2.0.jar",
       "artifact_sha256": "6165a5c5ce281b2b2fbf02cf5b2de53e77d35c1ee9cdf42d25e01d22e76fc4fc",
       "native_tests": 46,
-      "native_tests_passed": true,
-      "packaged_startup_commands_reload_shutdown_passed": true,
+      "native_tests_passed": false,
+      "packaged_startup_commands_reload_shutdown_passed": false,
       "website_integration_verified": false
     },
     {
@@ -633,10 +635,10 @@
       "loader_version": "56.0.9",
       "java_major": 21,
       "artifact": "namelessmc-forge-1.21.6-0.2.0.jar",
-      "artifact_sha256": null,
-      "native_tests": 0,
-      "native_tests_passed": false,
-      "packaged_startup_commands_reload_shutdown_passed": false,
+      "artifact_sha256": "040e4686f84ac45e1c1d3108754af336a3778a9190b389fed41ecb8c76c1734d",
+      "native_tests": 46,
+      "native_tests_passed": true,
+      "packaged_startup_commands_reload_shutdown_passed": true,
       "website_integration_verified": false
     },
     {
@@ -646,9 +648,9 @@
       "loader_version": "21.6.20-beta",
       "java_major": 21,
       "artifact": "namelessmc-neoforge-1.21.6-0.2.0.jar",
-      "artifact_sha256": "2491ed7a991de8362ba46a920f27928e9d23944420d15bd4bae450669eba3cb4",
-      "native_tests": 0,
-      "native_tests_passed": false,
+      "artifact_sha256": "a56a7746a63d83e913594de9c9471daa96c850e9347affa3a4e8821f00402dd4",
+      "native_tests": 46,
+      "native_tests_passed": true,
       "packaged_startup_commands_reload_shutdown_passed": false,
       "website_integration_verified": false,
       "loader_beta": true
@@ -660,7 +662,7 @@
       "loader_version": "0.19.5",
       "java_major": 21,
       "artifact": "namelessmc-fabric-1.21.6-0.2.0.jar",
-      "artifact_sha256": "97fbbdb15c294afcd806115c492be32bdcf78b6a864bbf9a1f883858e38ba30a",
+      "artifact_sha256": "f3d9734830f6688cb465ee0e29f868bab33485206c98d1fce7e656bd6f70f120",
       "native_tests": 46,
       "native_tests_passed": true,
       "packaged_startup_commands_reload_shutdown_passed": true,
@@ -673,7 +675,7 @@
       "loader_version": "0.30.1",
       "java_major": 21,
       "artifact": "namelessmc-fabric-1.21.6-0.2.0.jar",
-      "artifact_sha256": "97fbbdb15c294afcd806115c492be32bdcf78b6a864bbf9a1f883858e38ba30a",
+      "artifact_sha256": "f3d9734830f6688cb465ee0e29f868bab33485206c98d1fce7e656bd6f70f120",
       "native_tests": 46,
       "native_tests_passed": true,
       "packaged_startup_commands_reload_shutdown_passed": true,
@@ -686,10 +688,10 @@
       "loader_version": "57.0.3",
       "java_major": 21,
       "artifact": "namelessmc-forge-1.21.7-0.2.0.jar",
-      "artifact_sha256": null,
-      "native_tests": 0,
-      "native_tests_passed": false,
-      "packaged_startup_commands_reload_shutdown_passed": false,
+      "artifact_sha256": "c465a562d1d089e91a68ff391e4afa5976277ccf8049dd95b6bf63cd31e613db",
+      "native_tests": 46,
+      "native_tests_passed": true,
+      "packaged_startup_commands_reload_shutdown_passed": true,
       "website_integration_verified": false
     },
     {
@@ -699,9 +701,9 @@
       "loader_version": "21.7.25-beta",
       "java_major": 21,
       "artifact": "namelessmc-neoforge-1.21.7-0.2.0.jar",
-      "artifact_sha256": null,
-      "native_tests": 0,
-      "native_tests_passed": false,
+      "artifact_sha256": "ef6b14c19a10a6d8ebf69f11c661f689d9bbef4d47bf9df805a19ec13c3f503b",
+      "native_tests": 46,
+      "native_tests_passed": true,
       "packaged_startup_commands_reload_shutdown_passed": false,
       "website_integration_verified": false,
       "loader_beta": true
@@ -713,7 +715,7 @@
       "loader_version": "0.19.5",
       "java_major": 21,
       "artifact": "namelessmc-fabric-1.21.7-0.2.0.jar",
-      "artifact_sha256": "2fc1739bc440e33ee526a8e8132e577a688b8d0c02c81703cb2c26144dcf7afe",
+      "artifact_sha256": "7852a0e3620407abb75103f219a7292b8867a0b239ad6358a296013dbaded911",
       "native_tests": 46,
       "native_tests_passed": true,
       "packaged_startup_commands_reload_shutdown_passed": true,
@@ -726,7 +728,7 @@
       "loader_version": "0.30.1",
       "java_major": 21,
       "artifact": "namelessmc-fabric-1.21.7-0.2.0.jar",
-      "artifact_sha256": "2fc1739bc440e33ee526a8e8132e577a688b8d0c02c81703cb2c26144dcf7afe",
+      "artifact_sha256": "7852a0e3620407abb75103f219a7292b8867a0b239ad6358a296013dbaded911",
       "native_tests": 46,
       "native_tests_passed": true,
       "packaged_startup_commands_reload_shutdown_passed": true,
@@ -739,10 +741,10 @@
       "loader_version": "58.1.26",
       "java_major": 21,
       "artifact": "namelessmc-forge-1.21.8-0.2.0.jar",
-      "artifact_sha256": null,
-      "native_tests": 0,
-      "native_tests_passed": false,
-      "packaged_startup_commands_reload_shutdown_passed": false,
+      "artifact_sha256": "33d2c753d282a8042081398a308e8b02746a8de89c51cc5b8d46dc76d4c1a112",
+      "native_tests": 46,
+      "native_tests_passed": true,
+      "packaged_startup_commands_reload_shutdown_passed": true,
       "website_integration_verified": false
     },
     {
@@ -752,9 +754,9 @@
       "loader_version": "21.8.57",
       "java_major": 21,
       "artifact": "namelessmc-neoforge-1.21.8-0.2.0.jar",
-      "artifact_sha256": null,
-      "native_tests": 0,
-      "native_tests_passed": false,
+      "artifact_sha256": "d4f7c2b296649011d88fc781640728d1e5a49c1ef3a8ba74a6ef76c21a536401",
+      "native_tests": 46,
+      "native_tests_passed": true,
       "packaged_startup_commands_reload_shutdown_passed": false,
       "website_integration_verified": false,
       "loader_beta": false
@@ -768,8 +770,8 @@
       "artifact": "namelessmc-fabric-1.21.8-0.2.0.jar",
       "artifact_sha256": "36b85b296d5e0b3fcff3c2c5253fee5aac416e7a80d87a206edaae6d38088332",
       "native_tests": 46,
-      "native_tests_passed": true,
-      "packaged_startup_commands_reload_shutdown_passed": true,
+      "native_tests_passed": false,
+      "packaged_startup_commands_reload_shutdown_passed": false,
       "website_integration_verified": false
     },
     {
@@ -781,8 +783,8 @@
       "artifact": "namelessmc-fabric-1.21.8-0.2.0.jar",
       "artifact_sha256": "36b85b296d5e0b3fcff3c2c5253fee5aac416e7a80d87a206edaae6d38088332",
       "native_tests": 46,
-      "native_tests_passed": true,
-      "packaged_startup_commands_reload_shutdown_passed": true,
+      "native_tests_passed": false,
+      "packaged_startup_commands_reload_shutdown_passed": false,
       "website_integration_verified": false
     },
     {
@@ -792,9 +794,9 @@
       "loader_version": "59.0.5",
       "java_major": 21,
       "artifact": "namelessmc-forge-1.21.9-0.2.0.jar",
-      "artifact_sha256": null,
-      "native_tests": 0,
-      "native_tests_passed": false,
+      "artifact_sha256": "6bb0e71163b94428d9154cda83ffe3fb560959604cced60ce2d7251abf9c2d47",
+      "native_tests": 46,
+      "native_tests_passed": true,
       "packaged_startup_commands_reload_shutdown_passed": false,
       "website_integration_verified": false
     },
@@ -805,9 +807,9 @@
       "loader_version": "21.9.16-beta",
       "java_major": 21,
       "artifact": "namelessmc-neoforge-1.21.9-0.2.0.jar",
-      "artifact_sha256": null,
-      "native_tests": 0,
-      "native_tests_passed": false,
+      "artifact_sha256": "f2b0d07c371a5102789a38f39a2b39c0a7a0506699055472847dcc69d9fe76bb",
+      "native_tests": 46,
+      "native_tests_passed": true,
       "packaged_startup_commands_reload_shutdown_passed": false,
       "website_integration_verified": false,
       "loader_beta": true
@@ -821,8 +823,8 @@
       "artifact": "namelessmc-fabric-1.21.9-0.2.0.jar",
       "artifact_sha256": "2b88eb3df7116ab11ff04d1c4cf50d373f43a18076551bfd477a625e6c28b71f",
       "native_tests": 46,
-      "native_tests_passed": true,
-      "packaged_startup_commands_reload_shutdown_passed": true,
+      "native_tests_passed": false,
+      "packaged_startup_commands_reload_shutdown_passed": false,
       "website_integration_verified": false
     },
     {
@@ -834,8 +836,8 @@
       "artifact": "namelessmc-fabric-1.21.9-0.2.0.jar",
       "artifact_sha256": "2b88eb3df7116ab11ff04d1c4cf50d373f43a18076551bfd477a625e6c28b71f",
       "native_tests": 46,
-      "native_tests_passed": true,
-      "packaged_startup_commands_reload_shutdown_passed": true,
+      "native_tests_passed": false,
+      "packaged_startup_commands_reload_shutdown_passed": false,
       "website_integration_verified": false
     },
     {
@@ -858,9 +860,9 @@
       "loader_version": "21.10.64",
       "java_major": 21,
       "artifact": "namelessmc-neoforge-1.21.10-0.2.0.jar",
-      "artifact_sha256": null,
-      "native_tests": 0,
-      "native_tests_passed": false,
+      "artifact_sha256": "9d44cc49e2ce5bc8501f4eaf01d3634da1b76a82751886b7ea6e888c2d5468f1",
+      "native_tests": 46,
+      "native_tests_passed": true,
       "packaged_startup_commands_reload_shutdown_passed": false,
       "website_integration_verified": false,
       "loader_beta": false
@@ -874,8 +876,8 @@
       "artifact": "namelessmc-fabric-1.21.10-0.2.0.jar",
       "artifact_sha256": "32e946a809f8fc1aabb757ffd83b1c98e807becb52e1dbc47566f625280c81c5",
       "native_tests": 46,
-      "native_tests_passed": true,
-      "packaged_startup_commands_reload_shutdown_passed": true,
+      "native_tests_passed": false,
+      "packaged_startup_commands_reload_shutdown_passed": false,
       "website_integration_verified": false
     },
     {
@@ -887,8 +889,8 @@
       "artifact": "namelessmc-fabric-1.21.10-0.2.0.jar",
       "artifact_sha256": "32e946a809f8fc1aabb757ffd83b1c98e807becb52e1dbc47566f625280c81c5",
       "native_tests": 46,
-      "native_tests_passed": true,
-      "packaged_startup_commands_reload_shutdown_passed": true,
+      "native_tests_passed": false,
+      "packaged_startup_commands_reload_shutdown_passed": false,
       "website_integration_verified": false
     },
     {
@@ -911,10 +913,10 @@
       "loader_version": "21.11.48",
       "java_major": 21,
       "artifact": "namelessmc-neoforge-1.21.11-0.2.0.jar",
-      "artifact_sha256": null,
-      "native_tests": 0,
-      "native_tests_passed": false,
-      "packaged_startup_commands_reload_shutdown_passed": false,
+      "artifact_sha256": "aadf385ebeb9cb1e28c477ee2ca3a7339c0c119c3b584064fa36cc5e1c570162",
+      "native_tests": 46,
+      "native_tests_passed": true,
+      "packaged_startup_commands_reload_shutdown_passed": true,
       "website_integration_verified": false,
       "loader_beta": false
     },
@@ -927,8 +929,8 @@
       "artifact": "namelessmc-fabric-1.21.11-0.2.0.jar",
       "artifact_sha256": "734465de62b4373922f99e65d3e2cd17360d5270e999c7b080e73b3ae186465a",
       "native_tests": 46,
-      "native_tests_passed": true,
-      "packaged_startup_commands_reload_shutdown_passed": true,
+      "native_tests_passed": false,
+      "packaged_startup_commands_reload_shutdown_passed": false,
       "website_integration_verified": false
     },
     {
@@ -940,8 +942,8 @@
       "artifact": "namelessmc-fabric-1.21.11-0.2.0.jar",
       "artifact_sha256": "734465de62b4373922f99e65d3e2cd17360d5270e999c7b080e73b3ae186465a",
       "native_tests": 46,
-      "native_tests_passed": true,
-      "packaged_startup_commands_reload_shutdown_passed": true,
+      "native_tests_passed": false,
+      "packaged_startup_commands_reload_shutdown_passed": false,
       "website_integration_verified": false
     },
     {
@@ -964,10 +966,10 @@
       "loader_version": "26.1.0.19-beta",
       "java_major": 25,
       "artifact": "namelessmc-neoforge-26.1-0.2.0.jar",
-      "artifact_sha256": null,
-      "native_tests": 0,
-      "native_tests_passed": false,
-      "packaged_startup_commands_reload_shutdown_passed": false,
+      "artifact_sha256": "56e69d6015c05b94a33e755f7696836b70f4d43becd2f005b8e4aa55b4e68c23",
+      "native_tests": 46,
+      "native_tests_passed": true,
+      "packaged_startup_commands_reload_shutdown_passed": true,
       "website_integration_verified": false,
       "loader_beta": true
     },
@@ -978,8 +980,8 @@
       "loader_version": "0.19.5",
       "java_major": 25,
       "artifact": "namelessmc-fabric-26.1-0.2.0.jar",
-      "artifact_sha256": null,
-      "native_tests": 0,
+      "artifact_sha256": "61185730f0d788f702300d1e9d78d081837bf6ffb363ff677a97e629e687668d",
+      "native_tests": 46,
       "native_tests_passed": false,
       "packaged_startup_commands_reload_shutdown_passed": false,
       "website_integration_verified": false
@@ -991,8 +993,8 @@
       "loader_version": "0.30.1",
       "java_major": 25,
       "artifact": "namelessmc-fabric-26.1-0.2.0.jar",
-      "artifact_sha256": null,
-      "native_tests": 0,
+      "artifact_sha256": "61185730f0d788f702300d1e9d78d081837bf6ffb363ff677a97e629e687668d",
+      "native_tests": 46,
       "native_tests_passed": false,
       "packaged_startup_commands_reload_shutdown_passed": false,
       "website_integration_verified": false
@@ -1031,8 +1033,8 @@
       "loader_version": "0.19.5",
       "java_major": 25,
       "artifact": "namelessmc-fabric-26.1.1-0.2.0.jar",
-      "artifact_sha256": null,
-      "native_tests": 0,
+      "artifact_sha256": "af99a51e63f15a40d93e65428d85e92c04a32d4fe877a7ca708933577786484b",
+      "native_tests": 46,
       "native_tests_passed": false,
       "packaged_startup_commands_reload_shutdown_passed": false,
       "website_integration_verified": false
@@ -1044,8 +1046,8 @@
       "loader_version": "0.30.1",
       "java_major": 25,
       "artifact": "namelessmc-fabric-26.1.1-0.2.0.jar",
-      "artifact_sha256": null,
-      "native_tests": 0,
+      "artifact_sha256": "af99a51e63f15a40d93e65428d85e92c04a32d4fe877a7ca708933577786484b",
+      "native_tests": 46,
       "native_tests_passed": false,
       "packaged_startup_commands_reload_shutdown_passed": false,
       "website_integration_verified": false
@@ -1084,8 +1086,8 @@
       "loader_version": "0.19.5",
       "java_major": 25,
       "artifact": "namelessmc-fabric-26.1.2-0.2.0.jar",
-      "artifact_sha256": null,
-      "native_tests": 0,
+      "artifact_sha256": "6a0f366aea1d90d0c13dad4e8ca075896caefd1d032607d535d00fa1d3b4814a",
+      "native_tests": 46,
       "native_tests_passed": false,
       "packaged_startup_commands_reload_shutdown_passed": false,
       "website_integration_verified": false
@@ -1097,8 +1099,8 @@
       "loader_version": "0.30.1",
       "java_major": 25,
       "artifact": "namelessmc-fabric-26.1.2-0.2.0.jar",
-      "artifact_sha256": null,
-      "native_tests": 0,
+      "artifact_sha256": "6a0f366aea1d90d0c13dad4e8ca075896caefd1d032607d535d00fa1d3b4814a",
+      "native_tests": 46,
       "native_tests_passed": false,
       "packaged_startup_commands_reload_shutdown_passed": false,
       "website_integration_verified": false
@@ -1137,8 +1139,8 @@
       "loader_version": "0.19.5",
       "java_major": 25,
       "artifact": "namelessmc-fabric-26.2-0.2.0.jar",
-      "artifact_sha256": null,
-      "native_tests": 0,
+      "artifact_sha256": "19ef4f89a9ee97f5e42324ed447069b9e879cfdce4096e855ada4b3802f0ff1c",
+      "native_tests": 46,
       "native_tests_passed": false,
       "packaged_startup_commands_reload_shutdown_passed": false,
       "website_integration_verified": false
@@ -1150,8 +1152,8 @@
       "loader_version": "0.30.1",
       "java_major": 25,
       "artifact": "namelessmc-fabric-26.2-0.2.0.jar",
-      "artifact_sha256": null,
-      "native_tests": 0,
+      "artifact_sha256": "19ef4f89a9ee97f5e42324ed447069b9e879cfdce4096e855ada4b3802f0ff1c",
+      "native_tests": 46,
       "native_tests_passed": false,
       "packaged_startup_commands_reload_shutdown_passed": false,
       "website_integration_verified": false
@@ -1166,7 +1168,7 @@
       "artifact_sha256": "c819e3b2c5b3cc807eea9be3d4fab1dc43245af3aa457f4c1f8ab0fd337c130c",
       "native_tests": 46,
       "native_tests_passed": true,
-      "packaged_startup_commands_reload_shutdown_passed": true,
+      "packaged_startup_commands_reload_shutdown_passed": false,
       "website_integration_verified": false
     },
     {
@@ -1190,10 +1192,10 @@
       "loader_version": "0.19.5",
       "java_major": 25,
       "artifact": "namelessmc-fabric-26.3-0.2.0.jar",
-      "artifact_sha256": "81595612e753beb204cef4ac8447f20dd28272c6849455bfccb071fd472b9c9e",
-      "native_tests": 45,
-      "native_tests_passed": false,
-      "packaged_startup_commands_reload_shutdown_passed": false,
+      "artifact_sha256": "330d04f1030c5487bdcadbf0daa1b8f755715d6d05bff696b86b93b5f9ba685c",
+      "native_tests": 46,
+      "native_tests_passed": true,
+      "packaged_startup_commands_reload_shutdown_passed": true,
       "website_integration_verified": false
     },
     {
@@ -1203,11 +1205,12 @@
       "loader_version": "0.30.1",
       "java_major": 25,
       "artifact": "namelessmc-fabric-26.3-0.2.0.jar",
-      "artifact_sha256": "81595612e753beb204cef4ac8447f20dd28272c6849455bfccb071fd472b9c9e",
-      "native_tests": 45,
-      "native_tests_passed": false,
-      "packaged_startup_commands_reload_shutdown_passed": false,
+      "artifact_sha256": "330d04f1030c5487bdcadbf0daa1b8f755715d6d05bff696b86b93b5f9ba685c",
+      "native_tests": 46,
+      "native_tests_passed": true,
+      "packaged_startup_commands_reload_shutdown_passed": true,
       "website_integration_verified": false
     }
-  ]
+  ],
+  "confirmed_upstream_shutdown_limitations": 1
 }

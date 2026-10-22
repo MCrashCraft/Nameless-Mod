@@ -4,7 +4,7 @@ Use the repository's exact-target driver rather than mixing Gradle generations:
 
 ```powershell
 python scripts/build.py --loader forge --minecraft 1.20.1 --source-bundle
-python scripts/build.py --loader forge --minecraft 26.3 --source-bundle
+python scripts/build.py --loader forge --minecraft 26.3 --source-bundle --accept-test-eula
 ```
 
 Add `--plan` to print toolchain requirements without building. The driver uses JDK17 for Minecraft1.20.1–1.20.4, JDK21 for1.20.6–1.21.11, and JDK25 for26.x. JDK paths can be supplied through the documented version-specific environment variables or explicit options. No installed Minecraft profile or global Java setting is changed.
@@ -27,3 +27,5 @@ Dependency libraries are shaded and relocated; Minecraft, Forge and LuckPerms cl
 The `sourceBundle` task includes all sibling sources and build tooling needed to reproduce an artifact. It excludes compiled outputs, Gradle caches, authentication data, server configuration and worlds.
 
 Compilation and unit tests are distinct from a packaged-JAR startup check. See the compatibility documentation and workflow results for actual completed validation. Use only disposable, loopback-bound worlds for local smoke tests; never point a test launcher at an existing server world.
+
+Forge 1.21 and later require initialized FML registries for the native JUnit suite. After reviewing the Minecraft EULA, pass `--accept-test-eula` to permit its disposable loopback server. `forge/loader-tests.gradle` merges the test sources into a development module, invokes the actual Jupiter engine after server startup, and requires all 46 tests to execute successfully. The development-only entry and libraries are excluded from the production JAR. A clean server exit without complete passing XML and summary is a failed test. `--skip-tests` omits that server and does not record a test pass.

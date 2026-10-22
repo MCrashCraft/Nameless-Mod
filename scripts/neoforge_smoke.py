@@ -136,15 +136,23 @@ def run(repo: Path, work: Path, target: str, java_home: Path | None, timeout: in
                                stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True,
                                encoding="utf-8", errors="replace", creationflags=flags)
     messages = queue.Queue()
+    reader_state = {"eof": False, "error": None}
 
     def reader():
-        for line in process.stdout:
-            messages.put(line)
-        messages.put(None)
+        try:
+            for line in process.stdout:
+                messages.put(line)
+            reader_state["eof"] = True
+        except Exception as error:
+            reader_state["error"] = type(error).__name__
+        finally:
+            messages.put(None)
 
-    threading.Thread(target=reader, daemon=True).start()
+    reader_thread = threading.Thread(target=reader, daemon=True)
+    reader_thread.start()
     started = time.monotonic()
     ready = initialized = sent = stopped = timed_out = False
+    shutdown_help_queued = False
     command_at = None
     output = []
     with (root / "smoke.log").open("w", encoding="utf-8") as log:
@@ -166,12 +174,10 @@ def run(repo: Path, work: Path, target: str, java_home: Path | None, timeout: in
                     command_at = time.monotonic()
                     sent = True
                 if sent and not stopped and time.monotonic() - command_at > 5:
-                    process.stdin.write("stop\n"); process.stdin.flush(); stopped = True
+                    process.stdin.write("nlpl help\nstop\n"); process.stdin.flush()
+                    shutdown_help_queued = True
+                    stopped = True
                 if process.poll() is not None:
-                    while not messages.empty():
-                        line = messages.get_nowait()
-                        if line is not None:
-                            output.append(line); log.write(line)
                     break
             else:
                 timed_out = True
@@ -184,6 +190,15 @@ def run(repo: Path, work: Path, target: str, java_home: Path | None, timeout: in
         finally:
             if process.poll() is None:
                 process.kill(); process.wait(timeout=10)
+        # Process termination can race the stdout reader. Await EOF and include
+        # every final line before deciding whether shutdown was clean.
+        reader_thread.join(timeout=5)
+        while not messages.empty():
+            line = messages.get_nowait()
+            if line is not None:
+                output.append(line); log.write(line)
+        output_complete = (not reader_thread.is_alive() and reader_state["eof"]
+                           and reader_state["error"] is None)
     text = "".join(output)
     adapter_failure_markers = (
         "NamelessMC command failed", "Nameless background task failed",
@@ -192,6 +207,7 @@ def run(repo: Path, work: Path, target: str, java_home: Path | None, timeout: in
     )
     adapter_failures = [marker for marker in adapter_failure_markers if marker in text]
     passed = (ready and initialized and process.returncode == 0 and not timed_out
+              and output_complete and shutdown_help_queued
               and text.count("Nameless NeoForge: not configured") >= 2
               and text.count("Nameless NeoForge configuration reloaded; website configured=false") >= 3
               and not adapter_failures)
@@ -200,9 +216,11 @@ def run(repo: Path, work: Path, target: str, java_home: Path | None, timeout: in
               "installer_sha256": pin["sha256"], "mod_sha256": hashlib.sha256(artifact.read_bytes()).hexdigest(),
               "started": ready, "adapter_initialized": initialized, "exit_code": process.returncode,
               "timed_out": timed_out, "status_reload_passed": passed,
+              "output_complete": output_complete, "stdout_reader_error": reader_state["error"],
+              "shutdown_help_queued": shutdown_help_queued,
               "adapter_failures": adapter_failures,
               "runtime_verified": passed, "website_integration_verified": False,
-              "scope": "Packaged mod startup, console status/help plus three reloads, orderly shutdown",
+              "scope": "Packaged mod startup, console status/help plus three reloads, help before shutdown, complete stdout",
               "log": str(root / "smoke.log")}
     (root / "result.json").write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
     return result

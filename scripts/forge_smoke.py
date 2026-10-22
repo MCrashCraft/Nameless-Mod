@@ -94,6 +94,8 @@ def run(args) -> dict:
     work = owned_scratch(args.work)
     root = work / "runtime" / (args.minecraft + "-" + forge)
     root.mkdir(parents=True, exist_ok=True)
+    result_file = root / "result.json"
+    result_file.unlink(missing_ok=True)
     mod = (args.mod_jar.resolve() if args.mod_jar else repo / "forge/build" / args.minecraft / "libs"
            / ("namelessmc-forge-" + args.minecraft + "-0.2.0.jar"))
     if not mod.is_file():
@@ -135,15 +137,22 @@ def run(args) -> dict:
                                stderr=subprocess.STDOUT, text=True, encoding="utf-8", errors="replace",
                                creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0))
     lines = queue.Queue()
+    reader_state = {"complete": False, "error": None}
 
     def reader():
-        for line in process.stdout:
-            lines.put(line)
+        try:
+            for line in process.stdout:
+                lines.put(line)
+            reader_state["complete"] = True
+        except Exception as error:
+            reader_state["error"] = type(error).__name__
 
-    threading.Thread(target=reader, daemon=True).start()
+    reader_thread = threading.Thread(target=reader, daemon=True)
+    reader_thread.start()
     deadline = time.monotonic() + args.timeout
     ready = False
     stopped = False
+    shutdown_help_queued = timed_out = False
     command_at = None
     transcript = []
     with (root / "smoke.log").open("w", encoding="utf-8") as log:
@@ -159,11 +168,14 @@ def run(args) -> dict:
                 except queue.Empty:
                     pass
                 if ready and not stopped and time.monotonic() - command_at > 5:
-                    process.stdin.write("stop\n"); process.stdin.flush(); stopped = True
+                    process.stdin.write("nlpl help\nstop\n"); process.stdin.flush()
+                    stopped = shutdown_help_queued = True
                 if process.poll() is not None:
                     while not lines.empty():
                         line = lines.get_nowait(); log.write(line); transcript.append(line)
                     break
+            else:
+                timed_out = True
             if process.poll() is None:
                 process.stdin.write("stop\n"); process.stdin.flush()
                 try:
@@ -173,23 +185,33 @@ def run(args) -> dict:
         finally:
             if process.poll() is None:
                 process.terminate(); process.wait(timeout=20)
+            reader_thread.join(timeout=5)
+            while not lines.empty():
+                line = lines.get_nowait(); log.write(line); transcript.append(line)
     text = "".join(transcript)
     runtime_errors = [line for line in transcript if any(marker in line for marker in (
         "NamelessMC command failed", "Nameless Forge initialization failed", "Nameless Forge reload failed",
-        "Nameless background task failed", "Nameless task failed"))]
+        "Nameless background task failed", "Nameless task failed", "Nameless shutdown cleanup:"))]
     platform_warnings = [line.strip() for line in transcript if any(marker in line for marker in (
         "Unable to locate English counter names", "Only supported on OSX/BSD", "Only supported on Linux"))]
-    success = ready and process.returncode == 0 and text.count("Nameless Forge: not configured") >= 2 \
+    output_complete = reader_state["complete"] and not reader_thread.is_alive() and not reader_state["error"]
+    success = ready and shutdown_help_queued and output_complete and not timed_out \
+        and process.returncode == 0 and text.count("Nameless Forge: not configured") >= 2 \
         and "Nameless Forge configuration reloaded; website configured=false" in text \
         and not runtime_errors
     result = {"minecraft": args.minecraft, "loader": "forge", "loader_version": forge,
               "java_major": target["java_major"], "java_executable": str(java), "started": ready,
               "exit_code": process.returncode, "status_reload_passed": success,
+              "output_complete": output_complete, "shutdown_help_queued": shutdown_help_queued,
+              "stdout_reader_error": reader_state["error"],
+              "timed_out": timed_out,
               "runtime_verified": success, "runtime_errors": runtime_errors, "platform_warnings": platform_warnings,
               "mod_sha256": artifact_sha256,
               "installer_sha256": hashlib.sha256(installer.read_bytes()).hexdigest(),
               "log": str(root / "smoke.log"), "existing_server_data_copied": False}
-    (root / "result.json").write_text(json.dumps(result, indent=2) + "\n")
+    temporary_result = result_file.with_suffix(".json.tmp")
+    temporary_result.write_text(json.dumps(result, indent=2) + "\n")
+    temporary_result.replace(result_file)
     return result
 
 

@@ -94,6 +94,7 @@ def run(version: str, loader: str, timeout: int) -> dict:
     target = next(item for item in MATRIX["releases"] if item["minecraft"] == version)
     root = HERE / "runtime" / loader / version
     root.mkdir(parents=True, exist_ok=True)
+    (root / "result.json").unlink(missing_ok=True)
     java = selected_java(target["java_major"])
     installer = installer_jar(loader)
     launcher_name = "fabric-server-launch.jar" if loader == "fabric" else "quilt-server-launch.jar"
@@ -138,7 +139,8 @@ def run(version: str, loader: str, timeout: int) -> dict:
     def reader():
         for line in process.stdout:
             lines.put(line)
-    threading.Thread(target=reader, daemon=True).start()
+    reader_thread = threading.Thread(target=reader, daemon=True)
+    reader_thread.start()
     deadline = time.monotonic() + timeout
     ready = False
     sent = False
@@ -157,10 +159,8 @@ def run(version: str, loader: str, timeout: int) -> dict:
                 except queue.Empty:
                     pass
                 if ready and not sent and time.monotonic() - command_at > 5:
-                    process.stdin.write("stop\n"); process.stdin.flush(); sent = True
+                    process.stdin.write("nlpl help\nstop\n"); process.stdin.flush(); sent = True
                 if process.poll() is not None:
-                    while not lines.empty():
-                        line = lines.get_nowait(); log.write(line); output.append(line)
                     break
             else:
                 if process.poll() is None:
@@ -170,22 +170,32 @@ def run(version: str, loader: str, timeout: int) -> dict:
         finally:
             if process.poll() is None:
                 process.terminate(); process.wait(timeout=20)
+            reader_thread.join(timeout=5)
+            while not lines.empty():
+                line = lines.get_nowait(); log.write(line); output.append(line)
     text = "".join(output)
     failure_markers = ("ExceptionInInitializerError", "NoClassDefFoundError", "NoSuchMethodError", "NoSuchFieldError",
                        "IllegalAccessError", "NamelessMC command failed",
-                       "NamelessMC initialization failed", "Nameless background task failed", "NamelessMC reload failed")
+                       "NamelessMC initialization failed", "Nameless background task failed", "NamelessMC reload failed",
+                       "Nameless shutdown cleanup:")
     runtime_errors = [line.rstrip() for line in output if any(marker in line for marker in failure_markers)]
     platform_warnings = [line.rstrip() for line in output if "NullPointerException" in line and "oshi." in line]
-    success = ready and process.returncode == 0 and "NamelessMC: not configured" in text \
+    output_complete = not reader_thread.is_alive()
+    success = ready and sent and output_complete and process.returncode == 0 and "NamelessMC: not configured" in text \
         and "NamelessMC configuration reloaded; website configured=false" in text \
         and not runtime_errors
     result = {"minecraft": version, "loader": loader, "loader_version": target[loader]["loader"],
               "java_major": target["java_major"], "java_executable": str(java), "started": ready, "exit_code": process.returncode,
               "status_reload_passed": success, "mod_sha256": hashlib.sha256(mod.read_bytes()).hexdigest(),
+              "shutdown_help_queued": sent,
+              "output_complete": output_complete,
               "runtime_errors": runtime_errors,
               "platform_warnings": platform_warnings,
               "log": str(root / "smoke.log")}
-    (root / "result.json").write_text(json.dumps(result, indent=2) + "\n")
+    receipt = root / "result.json"
+    partial_receipt = root / "result.json.part"
+    partial_receipt.write_text(json.dumps(result, indent=2) + "\n")
+    partial_receipt.replace(receipt)
     return result
 
 

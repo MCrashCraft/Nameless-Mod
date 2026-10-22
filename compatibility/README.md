@@ -8,6 +8,8 @@ The native Forge, NeoForge and Fabric projects produce 67 distinct artifacts. Qu
 
 The [local validation table](VALIDATION.md) records completed native suites and packaged-server checks. Its [machine-readable receipts](validation.json) include the exact tested artifact hashes. Pending entries are not verified support claims. These local results are independent of GitHub Actions availability.
 
+The [known loader limitations](KNOWN-ISSUES.md) include the independently reproduced Forge 1.21 configuration-watcher shutdown hang. A successful native build does not override that failed process-exit check.
+
 NeoForge's selected loaders for 1.20.3, 1.20.5, 1.21.2, 1.21.6, 1.21.7, 1.21.9, 26.1 and 26.1.1 are beta releases. This is recorded in each target, not hidden behind a broad version range.
 
 Builds use the project's native loader APIs and actual Minecraft classes. The shared bindings account for command callbacks, profile names, rich-chat codecs and permission APIs across game versions. Tests check actual native rich-chat serialization, command safety, permissions, reload generations, privacy and Store delivery receipts. An artifact audit checks exact game metadata, licenses, absence of the removed addon and absence of bundled game/loader classes.

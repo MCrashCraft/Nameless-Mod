@@ -60,6 +60,7 @@ public final class NamelessFabricMod implements DedicatedServerModInitializer {
                     MinecraftCompatibility.minecraftVersion(), configured(), plugin.permissions() != null ? "LuckPerms" : "vanilla operator fallback");
         } catch (RuntimeException | LinkageError error) {
             loaded = false;
+            if (scheduler != null) scheduler.nextGeneration();
             if (plugin != null) { plugin.logger().logException(error); try { plugin.unload(); } catch (RuntimeException ignored) { } }
             if (audiences != null) audiences.close();
             if (scheduler != null) scheduler.close();
@@ -81,8 +82,8 @@ public final class NamelessFabricMod implements DedicatedServerModInitializer {
             LOGGER.info("NamelessMC configuration reloaded; website configured={}", configured());
         } catch (RuntimeException error) {
             plugin.logger().logException(error);
-            try { plugin.unload(); } catch (RuntimeException ignored) { }
             scheduler.nextGeneration();
+            try { plugin.unload(); } catch (RuntimeException ignored) { }
             LOGGER.error("NamelessMC reload failed ({}). Correct configuration and reload again.", error.getClass().getSimpleName());
             throw error;
         }
@@ -119,6 +120,7 @@ public final class NamelessFabricMod implements DedicatedServerModInitializer {
     private void stopping(MinecraftServer activeServer) {
         if (server != activeServer) return;
         loaded = false;
+        if (scheduler != null) scheduler.nextGeneration();
         try { if (plugin != null) plugin.unload(); }
         catch (RuntimeException error) { LOGGER.warn("Nameless shutdown cleanup: {}", error.getClass().getSimpleName()); }
         finally {
