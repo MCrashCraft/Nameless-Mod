@@ -15,7 +15,7 @@ The mods connect a server to an existing NamelessMC website, with account comman
 
 The requested range is **every stable Minecraft release from 1.20.1 through 26.3**. Each artifact requires one exact Minecraft release. [Coverage and limitations](compatibility/README.md) distinguish published loader availability, successful builds and runtime checks. Forge has no published builds for Minecraft 1.20.5 or 1.21.2. Some selected NeoForge loaders are beta releases.
 
-**The multi-version 0.2.0 work is undergoing validation. A selectable target is not a verified compatibility claim.** Consult the [build results](https://github.com/MCrashCraft/Nameless-Mod/actions/workflows/mod-builds.yml) before installing an artifact. The earlier Forge 1.20.1 version 0.1.1 passed 43 tests and isolated mock-website/server checks; those historical results do not certify every new port.
+**The multi-version 0.2.0 work is undergoing validation. A selectable target is not a verified compatibility claim.** Consult the [local validation table](compatibility/VALIDATION.md) before installing an artifact. It records the current native test and packaged-server results separately from pending targets. The [build workflow](https://github.com/MCrashCraft/Nameless-Mod/actions/workflows/mod-builds.yml) can repeat those checks when GitHub Actions is available. The earlier Forge 1.20.1 version 0.1.1 passed 43 tests and isolated mock-website/server checks; those historical results do not certify every new port.
 
 ## Build
 

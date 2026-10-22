@@ -101,17 +101,21 @@ def run(args) -> dict:
     installer = download_installer(args.minecraft, forge, work / "downloads")
     argfile = root / "libraries/net/minecraftforge/forge" / (args.minecraft + "-" + forge) \
         / ("win_args.txt" if os.name == "nt" else "unix_args.txt")
+    # Forge 49.0.2's official installer emits an executable bootstrap shim instead
+    # of platform argument files. Use that generated launcher without guessing
+    # or reconstructing its classpath.
+    shim = root / f"forge-{args.minecraft}-{forge}-shim.jar"
     temporary = work / "temp"
     temporary.mkdir(exist_ok=True)
     environment = dict(os.environ, TEMP=str(temporary), TMP=str(temporary))
-    if not argfile.is_file():
+    if not argfile.is_file() and not shim.is_file():
         with (root / "installer.log").open("w", encoding="utf-8") as log:
             subprocess.run([str(java), "-Xmx1024M", "-jar", str(installer), "--installServer", str(root)],
                            cwd=root, env=environment, stdout=log, stderr=subprocess.STDOUT,
                            check=True, timeout=args.install_timeout,
                            creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0))
-    if not argfile.is_file():
-        raise RuntimeError("Official Forge installer did not create the expected server argument file")
+    if not argfile.is_file() and not shim.is_file():
+        raise RuntimeError("Official Forge installer did not create a platform argument file or bootstrap shim")
     mods = root / "mods"
     mods.mkdir(exist_ok=True)
     if any(file.name != mod.name for file in mods.iterdir()):
@@ -125,7 +129,8 @@ def run(args) -> dict:
         'generator-settings={"biome":"minecraft:plains","layers":[{"block":"minecraft:bedrock","height":1},{"block":"minecraft:dirt","height":2},{"block":"minecraft:grass_block","height":1}],"features":false,"lakes":false}\n'
         "view-distance=2\nsimulation-distance=2\nspawn-protection=0\ndifficulty=peaceful\n"
         "max-tick-time=120000\nonline-mode=true\n", encoding="utf-8")
-    process = subprocess.Popen([str(java), "-Xms256M", "-Xmx1536M", "@" + str(argfile), "nogui"],
+    launch = ["@" + str(argfile)] if argfile.is_file() else ["-jar", str(shim)]
+    process = subprocess.Popen([str(java), "-Xms256M", "-Xmx1536M", *launch, "nogui"],
                                cwd=root, env=environment, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
                                stderr=subprocess.STDOUT, text=True, encoding="utf-8", errors="replace",
                                creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0))
