@@ -31,7 +31,9 @@ Use `--plan` to see the exact build/runtime Java and Gradle requirements, or `--
 
 Gradle wrappers download their pinned distribution into `GRADLE_USER_HOME`. Set that environment variable to a suitable build-cache location. The modern Forge toolchain can require several GiB while preparing Minecraft; these build requirements are separate from the mod's server runtime requirements.
 
-Outputs are isolated under `<loader>/build/<minecraft>/libs/`. Install the final `namelessmc-...-0.2.0.jar`, not a `slim`, `dev` or sources artifact. Complete corresponding source ZIPs are under `distributions/` and contain all shared and loader projects needed to rebuild. The build driver audits packaged metadata, licenses and prohibited bundled content; it does not start a server.
+Forge 1.21 and later run the native unit suite after the real Forge loader initializes in a disposable loopback server. Read the [Minecraft EULA](https://aka.ms/MinecraftEULA), then add `--accept-test-eula` to those build commands. This acceptance applies only to the test server. `--skip-tests` builds without starting it and does not count as a verified test pass. Existing servers and worlds are never test inputs.
+
+Outputs are isolated under `<loader>/build/<minecraft>/libs/`. Install the final `namelessmc-...-0.2.0.jar`, not a `slim`, `dev` or sources artifact. Complete corresponding source ZIPs are under `distributions/` and contain all shared and loader projects needed to rebuild. The build driver audits packaged metadata, licenses and prohibited bundled content.
 
 ## Installation and private configuration
 

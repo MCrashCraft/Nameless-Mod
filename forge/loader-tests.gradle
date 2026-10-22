@@ -1,0 +1,181 @@
+/* SPDX-License-Identifier: GPL-3.0-or-later */
+// Forge 1.21+ item bootstrap invokes ForgeHooks and therefore requires real FML.
+// Run unmodified assertions after an isolated server has actually initialized.
+def gameForLoaderTests = providers.gradleProperty('minecraftVersion')
+        .orElse(providers.gradleProperty('minecraft_version')).getOrElse('1.20.1')
+def needsNativeLoader = gameForLoaderTests.startsWith('26.') || gameForLoaderTests == '1.21' ||
+        gameForLoaderTests.startsWith('1.21.')
+if (!needsNativeLoader) return
+
+def testBus7 = gameForLoaderTests.startsWith('26.') ||
+        (gameForLoaderTests.startsWith('1.21.') && gameForLoaderTests.tokenize('.')[2].toInteger() >= 6)
+def nativeReports = layout.buildDirectory.dir('test-results/test')
+def nativeSummary = layout.buildDirectory.file('loader-junit/summary.json')
+def testRunDirectory = layout.buildDirectory.dir('loader-junit/runtime')
+def generatedLoaderTests = layout.buildDirectory.dir('generated/sources/loader-test')
+def generatedLoaderResources = layout.buildDirectory.dir('generated/resources/loader-test')
+
+sourceSets.test.java.srcDir(generatedLoaderTests)
+sourceSets.test.resources.srcDir(generatedLoaderResources)
+dependencies {
+    testRuntimeOnly 'org.junit.platform:junit-platform-reporting:1.10.2'
+    // Official development classpath merger; it consumes MOD_CLASSES before FML.
+    testRuntimeOnly 'net.minecraftforge:bootstrap-dev:2.1.8'
+}
+// The test entry compiles against JUnit's launcher/reporting API; never shade it in production.
+dependencies {
+    testImplementation 'org.junit.platform:junit-platform-launcher:1.10.2'
+    testImplementation 'org.junit.platform:junit-platform-reporting:1.10.2'
+    testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.10.2'
+}
+
+tasks.register('generateLoaderTestHarness') {
+    inputs.file('src/loader-test/NamelessLoaderTests.java.template')
+    inputs.file('loader-tests.gradle')
+    inputs.file('src/main/resources/META-INF/mods.toml')
+    inputs.file('../compatibility/targets.json')
+    inputs.property('modVersion', project.version.toString())
+    inputs.property('bus7', testBus7)
+    outputs.dirs(generatedLoaderTests, generatedLoaderResources)
+    doLast {
+        def constructor = testBus7 ? '''public NamelessLoaderTests(net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext context) {
+        net.minecraftforge.event.server.ServerStartedEvent.BUS.addListener(this::run);
+    }''' : '''public NamelessLoaderTests() {
+        net.minecraftforge.common.MinecraftForge.EVENT_BUS.addListener(this::run);
+    }'''
+        def target = generatedLoaderTests.get().file('dev/mcrashcraft/namelesstest/NamelessLoaderTests.java').asFile
+        target.parentFile.mkdirs()
+        target.setText(file('src/loader-test/NamelessLoaderTests.java.template').getText('UTF-8')
+                .replace('@@CONSTRUCTOR@@', constructor), 'UTF-8')
+        def metadata = generatedLoaderResources.get().file('META-INF/mods.toml').asFile
+        metadata.parentFile.mkdirs()
+        def row = new groovy.json.JsonSlurper().parse(file('../compatibility/targets.json')).releases.find { it.minecraft == gameForLoaderTests }
+        def major = row.forge.version.tokenize('.')[0].toInteger()
+        def testMetadata = file('src/main/resources/META-INF/mods.toml').getText('UTF-8')
+        [version: project.version, minecraftVersion: gameForLoaderTests,
+         forgeVersion: row.forge.version, forgeMajor: major, nextForgeMajor: major + 1].each { key, value ->
+            testMetadata = testMetadata.replace('${' + key + '}', value.toString())
+        }
+        metadata.setText(testMetadata + '''
+[[mods]]
+modId="namelesstest"
+version="0.0.0-test-only"
+displayName="NamelessMC isolated native JUnit fixture (not distributable)"
+displayTest="IGNORE_ALL_VERSION"
+''', 'UTF-8')
+        def manifest = generatedLoaderResources.get().file('META-INF/MANIFEST.MF').asFile
+        manifest.setText('Manifest-Version: 1.0\nAutomatic-Module-Name: namelesstest\n\n', 'UTF-8')
+    }
+}
+tasks.named('compileTestJava').configure { dependsOn 'generateLoaderTestHarness' }
+tasks.named('processTestResources').configure { dependsOn 'generateLoaderTestHarness' }
+
+tasks.register('prepareNativeLoaderTest') {
+    dependsOn 'testClasses'
+    outputs.upToDateWhen { false }
+    doLast {
+        if (!providers.gradleProperty('acceptMinecraftEula').map { it.toBoolean() }.getOrElse(false)) {
+            throw new GradleException('Isolated native tests require explicit -PacceptMinecraftEula=true. Review https://aka.ms/MinecraftEULA first.')
+        }
+        def run = testRunDirectory.get().asFile.canonicalFile
+        def boundary = layout.buildDirectory.get().asFile.canonicalFile.toPath()
+        if (!run.toPath().startsWith(boundary)) throw new GradleException('Native test runtime escaped its version build directory')
+        def marker = new File(run, '.nameless-loader-test')
+        if (run.exists() && run.listFiles().length > 0 && (!marker.isFile() || marker.text.trim() != gameForLoaderTests)) {
+            throw new GradleException('Refusing to replace an unmarked test runtime directory')
+        }
+        // Only this marked, version-specific disposable test world is reset.
+        if (run.exists()) delete(run)
+        run.mkdirs(); marker.setText(gameForLoaderTests, 'UTF-8')
+        new File(run, 'eula.txt').setText('eula=true\n', 'UTF-8')
+        new File(run, 'server.properties').setText('''server-ip=127.0.0.1
+server-port=0
+online-mode=false
+enable-rcon=false
+enable-query=false
+level-name=world
+level-type=minecraft:flat
+generator-settings={"layers":[{"block":"minecraft:bedrock","height":1},{"block":"minecraft:dirt","height":2},{"block":"minecraft:grass_block","height":1}],"biome":"minecraft:plains","features":false,"lakes":false}
+generate-structures=false
+spawn-protection=0
+view-distance=2
+simulation-distance=2
+spawn-chunk-radius=0
+max-players=1
+max-tick-time=180000
+motd=NamelessMC disposable native JUnit fixture
+''', 'UTF-8')
+        nativeReports.get().asFile.mkdirs()
+        nativeReports.get().asFile.listFiles().findAll { it.name.startsWith('TEST-') && it.name.endsWith('.xml') }.each { it.delete() }
+        nativeSummary.get().asFile.delete()
+    }
+}
+
+minecraft.runs {
+    register('server') {
+        with(sourceSets.test) {
+            workingDir = testRunDirectory
+            args '--nogui'
+            systemProperty 'nameless.junit.reports', nativeReports.get().asFile.absolutePath
+            systemProperty 'nameless.junit.summary', nativeSummary.get().asFile.absolutePath
+            systemProperty 'nameless.junit.classes', fileTree('src/test/java') { include '**/*Test.java' }.files
+                    .collect { file('src/test/java').toPath().relativize(it.toPath()).toString().replace('\\', '.').replace('/', '.').replaceAll(/\.java$/, '') }.sort().join(',')
+            systemProperty 'nameless.junit.expected', '46'
+            systemProperty 'terminal.jline', 'false'
+            systemProperty 'terminal.ansi', 'false'
+            environment 'MOD_CLASSES', '{source_roots}'
+            mods {
+                // Test and main share Java packages, so they must be one real FML module.
+                // Test resources come first and contain metadata for BOTH constructors.
+                namelessforge { source sourceSets.test; source sourceSets.main }
+            }
+        }
+    }
+}
+// ForgeGradle registers one official Slime Launcher task for each run/source set.
+tasks.matching { it.name == 'runTestServer' }.configureEach {
+    dependsOn 'prepareNativeLoaderTest'
+    timeout = java.time.Duration.ofMinutes(10)
+    maxHeapSize = '2G'
+    doFirst {
+        def nativeClasspath = classpath.asPath
+        layout.buildDirectory.file('loader-junit/classpath.txt').get().asFile.setText(nativeClasspath, 'UTF-8')
+        // Windows JavaExec otherwise replaces a >32K classpath with a manifest JAR.
+        // Forge's real bootstrap enumerates java.class.path itself, so preserve the
+        // actual entries using the JDK's standard argument-file support instead.
+        def argumentsFile = layout.buildDirectory.file('loader-junit/java-classpath.args').get().asFile
+        // Keep Windows separators: legacy FML locators parse File.separatorChar.
+        argumentsFile.setText('-classpath\n"' + nativeClasspath.replace('\\', '\\\\') + '"\n', 'UTF-8')
+        classpath = files()
+        jvmArgs('@' + argumentsFile.absolutePath)
+    }
+}
+tasks.register('nativeLoaderTest') {
+    group = 'verification'
+    description = 'Runs all native JUnit assertions after real Forge server initialization.'
+    dependsOn 'runTestServer'
+    doLast {
+        def summaryFile = nativeSummary.get().asFile
+        if (!summaryFile.isFile()) throw new GradleException('Native JUnit did not produce a complete summary')
+        def summary = new groovy.json.JsonSlurper().parse(summaryFile)
+        if (summary.complete != true || summary.found != 46 || summary.succeeded != 46 ||
+                summary.failed != 0 || summary.aborted != 0 || summary.skipped != 0) {
+            throw new GradleException('Native JUnit failed or was incomplete: ' + summary)
+        }
+        def reports = nativeReports.get().asFile.listFiles().findAll { it.name.startsWith('TEST-') && it.name.endsWith('.xml') }
+        def counts = [tests: 0, failures: 0, errors: 0, skipped: 0]
+        reports.each { report ->
+            def xml = new groovy.xml.XmlSlurper().parse(report)
+            counts.keySet().each { key -> counts[key] += xml."@$key".text().toInteger() }
+        }
+        if (counts.tests != 46 || counts.failures || counts.errors || counts.skipped) {
+            throw new GradleException('Native JUnit XML failed or was incomplete: ' + counts)
+        }
+        logger.lifecycle('Native Forge JUnit verified: 46 executed, 46 passed, 0 failed/aborted/skipped')
+    }
+}
+tasks.named('test').configure {
+    // A disabled Gradle Test action does not clear the actual server-generated JUnit XML.
+    enabled = false
+    dependsOn 'nativeLoaderTest'
+}

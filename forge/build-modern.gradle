@@ -179,3 +179,4 @@ tasks.named('build').configure { dependsOn 'shadowJar' }
 tasks.named('test').configure { useJUnitPlatform() }
 
 apply from: '../build-tools/source-bundle.gradle'
+apply from: 'loader-tests.gradle'

@@ -1,0 +1,75 @@
+/* SPDX-License-Identifier: GPL-3.0-or-later */
+package dev.mcrashcraft.namelesstest;
+
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.event.server.ServerStartedEvent;
+import org.junit.platform.engine.discovery.DiscoverySelectors;
+import org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder;
+import org.junit.platform.launcher.core.LauncherFactory;
+import org.junit.platform.launcher.core.LauncherConfig;
+import org.junit.jupiter.engine.JupiterTestEngine;
+import org.junit.platform.launcher.listeners.SummaryGeneratingListener;
+import org.junit.platform.reporting.legacy.xml.LegacyXmlReportGeneratingListener;
+
+import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+import java.util.Arrays;
+import java.util.concurrent.atomic.AtomicBoolean;
+
+/** Test-source-only runner. It is never included in the production mod JAR. */
+@Mod("namelesstest")
+public final class NamelessLoaderTests {
+    private final AtomicBoolean started = new AtomicBoolean();
+
+    @@CONSTRUCTOR@@
+
+    private void run(ServerStartedEvent event) {
+        if (!started.compareAndSet(false, true)) return;
+        // Actual Forge, registry and mod initialization has finished before this event.
+        // Keep the server thread free while tests exercise asynchronous HTTP boundaries.
+        Thread worker = new Thread(() -> {
+            try {
+                Path reports = Path.of(System.getProperty("nameless.junit.reports"));
+                Path summaryPath = Path.of(System.getProperty("nameless.junit.summary"));
+                Files.createDirectories(reports);
+                Files.createDirectories(summaryPath.getParent());
+                var request = LauncherDiscoveryRequestBuilder.request()
+                        .selectors(Arrays.stream(System.getProperty("nameless.junit.classes").split(","))
+                                .map(DiscoverySelectors::selectClass).toList())
+                        .build();
+                var summaryListener = new SummaryGeneratingListener();
+                var xmlListener = new LegacyXmlReportGeneratingListener(reports, new PrintWriter(System.out, true));
+                // Forge separates its game module layer from bootstrap libraries.
+                // Register the real Jupiter engine explicitly across that service boundary.
+                var launcherConfig = LauncherConfig.builder()
+                        .enableTestEngineAutoRegistration(false)
+                        .addTestEngines(new JupiterTestEngine())
+                        .build();
+                LauncherFactory.create(launcherConfig).execute(request, summaryListener, xmlListener);
+                var summary = summaryListener.getSummary();
+                summary.printTo(new PrintWriter(System.out, true));
+                summary.printFailuresTo(new PrintWriter(System.out, true));
+                String result = "{\"complete\":true,\"found\":" + summary.getTestsFoundCount()
+                        + ",\"succeeded\":" + summary.getTestsSucceededCount()
+                        + ",\"failed\":" + summary.getTestsFailedCount()
+                        + ",\"aborted\":" + summary.getTestsAbortedCount()
+                        + ",\"skipped\":" + summary.getTestsSkippedCount() + "}";
+                Path temporary = summaryPath.resolveSibling(summaryPath.getFileName() + ".tmp");
+                Files.writeString(temporary, result, StandardCharsets.UTF_8);
+                Files.move(temporary, summaryPath, StandardCopyOption.REPLACE_EXISTING);
+                System.out.println("NAMELESS_NATIVE_JUNIT_COMPLETE " + result);
+            } catch (Throwable error) {
+                // No completion summary means Gradle must fail, even after a clean server shutdown.
+                System.err.println("NAMELESS_NATIVE_JUNIT_RUNNER_FAILED");
+                error.printStackTrace(System.err);
+            } finally {
+                event.getServer().execute(() -> event.getServer().halt(false));
+            }
+        }, "Nameless native JUnit fixture");
+        worker.setDaemon(true);
+        worker.start();
+    }
+}

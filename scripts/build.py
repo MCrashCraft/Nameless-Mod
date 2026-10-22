@@ -1,6 +1,7 @@
 """Build and audit one exact-version NamelessMC server artifact.
 
-Requires Python 3.10+ and the JDKs shown by --plan. No server is started.
+Requires Python 3.10+ and the JDKs shown by --plan. Newer Forge native tests
+need an explicitly accepted, disposable loopback server; see --accept-test-eula.
 Wrapper downloads are checksum pinned. Set GRADLE_USER_HOME to choose the cache.
 """
 from pathlib import Path
@@ -35,9 +36,11 @@ def plan(loader, game):
               '9.7.1' if project == 'forge' and modern else
               '8.8' if project == 'forge' else
               '8.14.5' if early_neoforge else '9.2.1')
+    native_test_server = project == 'forge' and tuple(map(int, game.split('.'))) >= (1, 21)
     return dict(loader=loader, project=project, minecraft=game,
                 game_java=row['java_major'],
-                build_java=25 if project == 'fabric' else row['java_major'], gradle=gradle)
+                build_java=25 if project == 'fabric' else row['java_major'], gradle=gradle,
+                native_test_server=native_test_server)
 
 
 def matrix(include_quilt=True):
@@ -77,6 +80,9 @@ def audit_artifact(artifact, selected):
             raise ValueError('Game or loader classes must not be bundled')
         if any('/namelessexchange/' in name or 'cash-exchange' in name for name in names):
             raise ValueError('Unexpected removed addon content')
+        if any(name.startswith(('dev/mcrashcraft/namelesstest/', 'org/junit/', 'org/opentest4j/'))
+               or name == 'dev/mcrashcraft/namelessforge/NativeChatTestSupport.class' for name in names):
+            raise ValueError('Test fixtures and JUnit must not be distributed in the production mod')
         game = selected['minecraft']
         if selected['project'] == 'fabric':
             metadata = json.loads(archive.read('fabric.mod.json'))
@@ -103,6 +109,8 @@ def main():
     parser.add_argument('--java-home', help='JDK for the Gradle process; see --plan')
     parser.add_argument('--java-installations', help='Comma-separated installed JDK paths for game toolchains')
     parser.add_argument('--skip-tests', action='store_true', help='Compile/package only; does not count as a test pass')
+    parser.add_argument('--accept-test-eula', action='store_true',
+                        help='Accept the Minecraft EULA for disposable Forge native-test servers only')
     parser.add_argument('--source-bundle', action='store_true')
     parser.add_argument('--receipt', type=Path, help='Save artifact audit JSON after a successful build')
     args = parser.parse_args()
@@ -117,6 +125,9 @@ def main():
         if args.plan:
             print(json.dumps(selected, indent=2))
             return
+        if selected['native_test_server'] and not args.skip_tests and not args.accept_test_eula:
+            raise ValueError('This Forge native test suite starts a disposable server. Read '
+                             'https://aka.ms/MinecraftEULA and pass --accept-test-eula, or use --skip-tests')
         java = java_executable(selected['build_java'], args.java_home)
         folder = ROOT / selected['project']
         if args.gradle_executable:
@@ -137,6 +148,8 @@ def main():
         project_cache = folder / '.gradle' / 'targets' / args.minecraft
         command += ['--no-daemon', '--max-workers=2', '--project-cache-dir', str(project_cache),
                     '-PminecraftVersion=' + args.minecraft]
+        if args.accept_test_eula:
+            command.append('-PacceptMinecraftEula=true')
         installations = args.java_installations or ','.join(dict.fromkeys(
             value for key, value in os.environ.items() if key.startswith('JAVA_HOME') and value))
         if installations:

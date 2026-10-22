@@ -27,6 +27,12 @@ class BuildTargetTests(unittest.TestCase):
         selected = build.plan('fabric', '1.20.1')
         self.assertEqual(17, selected['game_java'])
         self.assertEqual(25, selected['build_java'])
+        self.assertFalse(selected['native_test_server'])
+        self.assertFalse(build.plan('forge', '1.20.6')['native_test_server'])
+        self.assertTrue(build.plan('forge', '1.21')['native_test_server'])
+        self.assertTrue(build.plan('forge', '1.21.4')['native_test_server'])
+        self.assertTrue(build.plan('forge', '1.21.5')['native_test_server'])
+        self.assertTrue(build.plan('forge', '26.3')['native_test_server'])
 
     def test_early_neoforge_selects_the_official_older_toolchain(self):
         for game in ('1.20.2', '1.20.3'):
@@ -39,7 +45,7 @@ class BuildTargetTests(unittest.TestCase):
         self.assertEqual('9.2.1', build.plan('neoforge', '1.20.4')['gradle'])
 
     def test_a_broad_range_or_bundled_game_is_rejected(self):
-        for invalid in ('range', 'game_class', 'addon', 'license'):
+        for invalid in ('range', 'game_class', 'addon', 'test_fixture', 'junit', 'license'):
             with self.subTest(invalid=invalid), tempfile.TemporaryDirectory() as folder:
                 artifact = Path(folder) / 'fixture.jar'
                 with zipfile.ZipFile(artifact, 'w') as archive:
@@ -51,6 +57,10 @@ class BuildTargetTests(unittest.TestCase):
                         archive.writestr('net/minecraft/Forbidden.class', '')
                     if invalid == 'addon':
                         archive.writestr('dev/example/namelessexchange/Forbidden.class', '')
+                    if invalid == 'test_fixture':
+                        archive.writestr('dev/mcrashcraft/namelesstest/Forbidden.class', '')
+                    if invalid == 'junit':
+                        archive.writestr('org/junit/Forbidden.class', '')
                 with self.assertRaises(ValueError):
                     build.audit_artifact(artifact, build.plan('fabric', '1.20.1'))
 

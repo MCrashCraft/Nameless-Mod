@@ -69,7 +69,7 @@ jobs:
       - name: Compile, test, audit and bundle complete source
         run: >-
           python3 scripts/build.py --loader '${{ matrix.loader }}'
-          --minecraft '${{ matrix.minecraft }}' --source-bundle
+          --minecraft '${{ matrix.minecraft }}' --source-bundle --accept-test-eula
           --receipt '${{ matrix.project }}/build/${{ matrix.minecraft }}/validation/build.json'
       - name: Start the packaged Fabric mod in a disposable server
         if: matrix.loader == 'fabric'

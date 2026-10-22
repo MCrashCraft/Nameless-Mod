@@ -83,10 +83,12 @@ Use the repository's exact-target build driver with the JDKs shown by `--plan`. 
 
 ```powershell
 python scripts/build.py --loader forge --minecraft 1.20.1 --source-bundle
-python scripts/build.py --loader forge --minecraft 26.3 --source-bundle
+python scripts/build.py --loader forge --minecraft 26.3 --source-bundle --accept-test-eula
 ```
 
 The complete server mod is `forge/build/<minecraft>/libs/namelessmc-forge-<minecraft>-0.2.0.jar`. A `-slim.jar` lacks bundled integration libraries and is not the installable release. The corresponding source ZIP is under `forge/build/<minecraft>/distributions/` and includes every shared and loader project needed to rebuild.
+
+For Minecraft 1.21 and later, the native JUnit suite requires initialized Forge registries and runs after a disposable loopback server starts. Read the [Minecraft EULA](https://aka.ms/MinecraftEULA) before passing `--accept-test-eula`. The loader-aware task requires all 46 tests to execute successfully, with no failures, skipped or aborted tests. The test entry, its metadata and JUnit libraries stay outside the production mod JAR. A separate packaged-JAR startup check validates the distributed artifact. `--skip-tests` builds without running that test server and does not certify a test pass.
 
 ## Source and licensing
 
