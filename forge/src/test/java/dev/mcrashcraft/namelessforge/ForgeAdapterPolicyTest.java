@@ -8,24 +8,34 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.format.TextColor;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeAll;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class ForgeAdapterPolicyTest {
+    @BeforeAll
+    static void initializeNativeChatRegistries() {
+        NativeChatTestSupport.bootstrap();
+    }
+
     @Test
-    void adventureRichLinkReallyReachesTheMinecraft1201Style() {
+    void adventureRichLinkReallyReachesTheNativeMinecraftStyle() {
         var rich = Component.text("Website", TextColor.color(0x12ab34))
                 .clickEvent(ClickEvent.openUrl("https://example.test/account"))
                 .hoverEvent(Component.text("Open your account"));
         var converted = ForgeAudienceProvider.minecraftComponent(rich);
         assertEquals("Website", converted.getString());
         assertNotNull(converted.getStyle().getClickEvent(), "A plain-text fallback silently loses account links");
-        assertEquals(net.minecraft.network.chat.ClickEvent.Action.OPEN_URL,
-                converted.getStyle().getClickEvent().getAction());
-        assertEquals("https://example.test/account", converted.getStyle().getClickEvent().getValue());
+        JsonObject nativeJson = JsonParser.parseString(NativeChatTestSupport.json(converted)).getAsJsonObject();
+        JsonObject click = nativeEvent(nativeJson, "clickEvent", "click_event");
+        assertEquals("open_url", click.get("action").getAsString());
+        assertEquals("https://example.test/account", nativeString(click, "value", "url"));
         assertEquals(0x12ab34, converted.getStyle().getColor().getValue());
-        assertEquals("Open your account", converted.getStyle().getHoverEvent()
-                .getValue(net.minecraft.network.chat.HoverEvent.Action.SHOW_TEXT).getString());
+        JsonObject hover = nativeEvent(nativeJson, "hoverEvent", "hover_event");
+        assertEquals("show_text", hover.get("action").getAsString());
+        var contents = hover.has("contents") ? hover.get("contents") : hover.get("value");
+        assertEquals("Open your account", contents.isJsonPrimitive() ? contents.getAsString()
+                : contents.getAsJsonObject().get("text").getAsString());
     }
 
     @Test
@@ -33,8 +43,19 @@ class ForgeAdapterPolicyTest {
         var rich = Component.text("Verify").clickEvent(ClickEvent.runCommand("/verify example"));
         var converted = ForgeAudienceProvider.minecraftComponent(rich);
         assertNotNull(converted.getStyle().getClickEvent());
-        assertEquals(net.minecraft.network.chat.ClickEvent.Action.SUGGEST_COMMAND,
-                converted.getStyle().getClickEvent().getAction());
+        JsonObject nativeJson = JsonParser.parseString(NativeChatTestSupport.json(converted)).getAsJsonObject();
+        JsonObject click = nativeEvent(nativeJson, "clickEvent", "click_event");
+        assertEquals("suggest_command", click.get("action").getAsString());
+        assertEquals("/verify example", nativeString(click, "value", "command"));
+    }
+
+    private static JsonObject nativeEvent(JsonObject component, String legacy, String modern) {
+        assertTrue(component.has(legacy) || component.has(modern), "Native serialization lost the rich event");
+        return component.getAsJsonObject(component.has(modern) ? modern : legacy);
+    }
+
+    private static String nativeString(JsonObject value, String legacy, String modern) {
+        return value.get(value.has(modern) ? modern : legacy).getAsString();
     }
 
     @Test
@@ -73,6 +94,28 @@ class ForgeAdapterPolicyTest {
                 "{\"text\":\"Click\",\"clickEvent\":{\"action\":\"open_file\",\"value\":\"C:/secret\"}}"))
                 .getAsJsonObject();
         assertFalse(file.has("clickEvent"));
+    }
+
+    @Test
+    void modernChatSchemaRetainsTheSameClickSafetyPolicy() {
+        JsonObject command = JsonParser.parseString(ForgeAudienceProvider.sanitizeChatJson(
+                "{\"text\":\"Click\",\"click_event\":{\"action\":\"run_command\",\"command\":\"/verify example\"}}"))
+                .getAsJsonObject();
+        assertEquals("suggest_command", command.getAsJsonObject("click_event").get("action").getAsString());
+        JsonObject nested = JsonParser.parseString(ForgeAudienceProvider.sanitizeChatJson(
+                "{\"text\":\"Click\",\"hover_event\":{\"action\":\"show_text\",\"value\":{\"text\":\"Unsafe\","
+                + "\"click_event\":{\"action\":\"open_url\",\"url\":\"file:///private\"}}}}"))
+                .getAsJsonObject();
+        assertFalse(nested.getAsJsonObject("hover_event").getAsJsonObject("value").has("click_event"));
+    }
+
+    @Test
+    void conflictingLegacyAndModernClickValuesCannotBypassSanitization() {
+        JsonObject result = JsonParser.parseString(ForgeAudienceProvider.sanitizeChatJson(
+                "{\"text\":\"Click\",\"click_event\":{\"action\":\"open_url\","
+                + "\"value\":\"https://example.test/safe\",\"url\":\"file:///private\"}}"))
+                .getAsJsonObject();
+        assertFalse(result.has("click_event"));
     }
 
     @Test

@@ -1,0 +1,179 @@
+import groovy.json.JsonSlurper
+
+plugins {
+    id 'java'
+    id 'net.minecraftforge.gradle' version '7.0.40'
+    id 'com.gradleup.shadow' version '9.3.0'
+}
+
+def requestedGame = providers.gradleProperty('minecraftVersion').orElse(providers.gradleProperty('minecraft_version')).getOrElse('1.20.1')
+def target = new JsonSlurper().parse(file('../compatibility/targets.json')).releases.find { it.minecraft == requestedGame }
+if (target == null || !target.forge.published) throw new GradleException('No published Forge loader for requested Minecraft target: ' + requestedGame)
+def forgeMajor = target.forge.version.tokenize('.')[0] as int
+// The 1.20.1 floor is checked against the pack's original Forge runtime in a disposable server.
+def minimumForge = requestedGame == '1.20.1' ? '47.4.16' : target.forge.version
+def eventBus7 = requestedGame.startsWith('26.') || requestedGame.startsWith('1.21.') && (requestedGame.tokenize('.')[2] as int) >= 6
+ext.minecraftVersion = requestedGame
+version = '0.2.0'
+group = 'dev.mcrashcraft'
+base { archivesName = 'namelessmc-forge-' + requestedGame }
+layout.buildDirectory = file('build/' + requestedGame)
+java.toolchain.languageVersion = JavaLanguageVersion.of(target.java_major as int)
+
+minecraft {
+    if (!requestedGame.startsWith('26.')) mappings channel: 'official', version: requestedGame
+}
+repositories {
+    minecraft.mavenizer(it)
+    maven fg.forgeMaven
+    maven fg.minecraftLibsMaven
+    mavenCentral()
+}
+
+configurations {
+    shade
+    implementation.extendsFrom shade
+}
+configurations.shade.dependencies.all { dependency ->
+    if (dependency instanceof org.gradle.api.artifacts.ModuleDependency) {
+        dependency.exclude group: 'org.slf4j'
+    }
+}
+
+dependencies {
+    implementation minecraft.dependency('net.minecraftforge:forge:' + requestedGame + '-' + target.forge.version)
+    compileOnly 'net.luckperms:api:5.5'
+    compileOnly 'org.checkerframework:checker-qual:3.55.1'
+    compileOnly 'org.slf4j:slf4j-api:2.0.1'
+    shade 'net.kyori:adventure-api:4.26.1'
+    shade 'net.kyori:adventure-text-minimessage:4.26.1'
+    shade 'net.kyori:adventure-text-serializer-gson:4.26.1'
+    shade 'net.kyori:adventure-text-serializer-plain:4.26.1'
+    shade 'org.spongepowered:configurate-yaml:4.2.0'
+    shade 'com.github.mizosoft.methanol:methanol:1.9.0'
+    shade 'com.google.code.gson:gson:2.14.0'
+    shade 'com.google.guava:guava:33.4.8-jre'
+    shade 'org.bstats:bstats-base:3.2.1'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.10.2'
+    testImplementation 'net.luckperms:api:5.5'
+    testImplementation 'org.slf4j:slf4j-api:2.0.1'
+    testRuntimeOnly 'org.slf4j:slf4j-simple:2.0.1'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.10.2'
+}
+
+sourceSets.main.java.srcDirs += [
+    '../minecraft-adapter/src/main/java',
+    'vendor/nameless-plugin/common/src/main',
+    'vendor/nameless-java-api/src/main/java',
+    'vendor/kyori-event/api/src/main/java',
+    layout.buildDirectory.dir('generated/sources/upstream'),
+    layout.buildDirectory.dir('generated/sources/native-bootstrap')
+]
+
+tasks.register('generateUpstreamConstants', Sync) {
+    from 'vendor/nameless-plugin/common/src/filtered'
+    into layout.buildDirectory.dir('generated/sources/upstream')
+    filter { line -> line.replace('${project.version}', '3.4.2-forge-' + project.version) }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+    options.compilerArgs += ['-proc:none']
+}
+tasks.register('generateNativeBootstrap') {
+    inputs.property('minecraftVersion', requestedGame)
+    inputs.property('eventBus7', eventBus7)
+    inputs.file('src/templates/NamelessForgeMod.java.template')
+    outputs.dir(layout.buildDirectory.dir('generated/sources/native-bootstrap'))
+    doLast {
+        def constructor = eventBus7 ? '''public NamelessForgeMod(net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext context) {
+        if (FMLEnvironment.dist != Dist.DEDICATED_SERVER) return;
+        RegisterCommandsEvent.BUS.addListener(this::registerCommands);
+        ServerStartedEvent.BUS.addListener(this::started);
+        ServerStoppingEvent.BUS.addListener(this::stopping);
+        PlayerEvent.PlayerLoggedInEvent.BUS.addListener(this::joined);
+        PlayerEvent.PlayerLoggedOutEvent.BUS.addListener(this::left);
+        TickEvent.ServerTickEvent.Post.BUS.addListener(this::tick);
+    }''' : '''public NamelessForgeMod() {
+        if (FMLEnvironment.dist != Dist.DEDICATED_SERVER) return;
+        var bus = net.minecraftforge.common.MinecraftForge.EVENT_BUS;
+        bus.addListener(this::registerCommands);
+        bus.addListener(this::started);
+        bus.addListener(this::stopping);
+        bus.addListener(this::joined);
+        bus.addListener(this::left);
+        bus.addListener(this::tick);
+    }'''
+        def tickType = eventBus7 ? 'TickEvent.ServerTickEvent.Post' : 'TickEvent.ServerTickEvent'
+        def tickGuard = eventBus7 ? 'if (!loaded) return;' : 'if (event.phase != TickEvent.Phase.END || !loaded) return;'
+        def text = file('src/templates/NamelessForgeMod.java.template').getText('UTF-8')
+                .replace('@@CONSTRUCTOR@@', constructor).replace('@@TICK_TYPE@@', tickType).replace('@@TICK_GUARD@@', tickGuard)
+        def output = layout.buildDirectory.file('generated/sources/native-bootstrap/dev/mcrashcraft/namelessforge/NamelessForgeMod.java').get().asFile
+        output.parentFile.mkdirs(); output.setText(text, 'UTF-8')
+    }
+}
+tasks.named('compileJava').configure { dependsOn 'generateUpstreamConstants', 'generateNativeBootstrap' }
+apply from: '../fabric/generate-compatibility.gradle'
+apply from: '../build-tools/adapter-tests.gradle'
+
+
+tasks.register('gatherDependencyLicenses') {
+    inputs.files configurations.shade
+    outputs.dir layout.buildDirectory.dir('generated/dependency-licenses')
+    doLast {
+        def licenseRoot = layout.buildDirectory.dir('generated/dependency-licenses').get().asFile
+        configurations.shade.resolvedConfiguration.resolvedArtifacts.each { artifact ->
+            copy {
+                from zipTree(artifact.file)
+                include '**/LICENSE*', '**/license*', '**/NOTICE*', '**/notice*', '**/COPYING*'
+                includeEmptyDirs = false
+                into new File(licenseRoot, artifact.moduleVersion.id.group + '.' + artifact.name + '-' + artifact.moduleVersion.id.version)
+            }
+        }
+    }
+}
+
+processResources {
+    dependsOn 'gatherDependencyLicenses'
+    from 'vendor/nameless-plugin/common/resources'
+    filesMatching('META-INF/mods.toml') { expand version: project.version, minecraftVersion: requestedGame,
+            forgeVersion: minimumForge, forgeMajor: forgeMajor, nextForgeMajor: forgeMajor + 1 }
+
+    from('LICENSE') { into 'META-INF/licenses/nameless-plugin' }
+    from('vendor/nameless-java-api/LICENSE') { into 'META-INF/licenses/nameless-java-api' }
+    from('vendor/kyori-event/license.txt') { into 'META-INF/licenses/kyori-event' }
+    from('UPSTREAM-NOTICE.md') { into 'META-INF' }
+    from(layout.buildDirectory.dir('generated/dependency-licenses')) { into 'META-INF/licenses/dependencies' }
+    from('third-party-licenses') { into 'META-INF/licenses/third-party' }
+}
+
+jar { archiveClassifier = 'slim' }
+
+shadowJar {
+    archiveClassifier = ''
+    configurations = [project.configurations.shade]
+    mergeServiceFiles()
+    exclude 'META-INF/*.SF', 'META-INF/*.RSA', 'META-INF/*.DSA', 'module-info.class', 'META-INF/versions/**/module-info.class'
+    relocate 'com.namelessmc.java_api', 'dev.mcrashcraft.namelessforge.lib.api'
+    relocate 'net.kyori', 'dev.mcrashcraft.namelessforge.lib.kyori'
+    relocate 'org.spongepowered.configurate', 'dev.mcrashcraft.namelessforge.lib.configurate'
+    relocate 'org.yaml.snakeyaml', 'dev.mcrashcraft.namelessforge.lib.snakeyaml'
+    relocate 'io.leangen.geantyref', 'dev.mcrashcraft.namelessforge.lib.geantyref'
+    relocate 'com.github.mizosoft.methanol', 'dev.mcrashcraft.namelessforge.lib.methanol'
+    relocate 'com.google.gson', 'dev.mcrashcraft.namelessforge.lib.gson'
+    relocate 'com.google.common', 'dev.mcrashcraft.namelessforge.lib.guava'
+    relocate 'com.google.thirdparty', 'dev.mcrashcraft.namelessforge.lib.googlethirdparty'
+    relocate 'com.google.errorprone', 'dev.mcrashcraft.namelessforge.lib.errorprone'
+    relocate 'com.google.j2objc', 'dev.mcrashcraft.namelessforge.lib.j2objc'
+    relocate 'org.reactivestreams', 'dev.mcrashcraft.namelessforge.lib.reactivestreams'
+    relocate 'org.jetbrains.annotations', 'dev.mcrashcraft.namelessforge.lib.jetbrains'
+    relocate 'org.checkerframework', 'dev.mcrashcraft.namelessforge.lib.checkerframework'
+    relocate 'org.jspecify', 'dev.mcrashcraft.namelessforge.lib.jspecify'
+    relocate 'javax.annotation', 'dev.mcrashcraft.namelessforge.lib.javaxannotation'
+    relocate 'org.bstats', 'dev.mcrashcraft.namelessforge.lib.bstats'
+}
+
+tasks.named('build').configure { dependsOn 'shadowJar' }
+tasks.named('test').configure { useJUnitPlatform() }
+
+apply from: '../build-tools/source-bundle.gradle'

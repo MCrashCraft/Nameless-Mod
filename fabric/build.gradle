@@ -1,0 +1,120 @@
+import groovy.json.JsonSlurper
+
+buildscript {
+    repositories { maven { url = 'https://maven.fabricmc.net/' }; gradlePluginPortal(); mavenCentral() }
+    dependencies { classpath 'net.fabricmc:fabric-loom:1.17.21' }
+}
+plugins { id 'com.gradleup.shadow' version '9.6.1' }
+
+def requestedGame = providers.gradleProperty('minecraftVersion').orElse(providers.gradleProperty('minecraft_version')).getOrElse('1.20.1')
+def targets = new JsonSlurper().parse(file('../compatibility/targets.json')).releases
+def target = targets.find { it.minecraft == requestedGame }
+if (target == null) throw new GradleException('Minecraft target [' + requestedGame + '] is not present in the checked-in release matrix; known=' + targets.collect { it.minecraft })
+ext.minecraftVersion = requestedGame
+ext.minecraftJava = target.java_major as int
+apply plugin: requestedGame.startsWith('26.') ? 'net.fabricmc.fabric-loom' : 'net.fabricmc.fabric-loom-remap'
+
+version = '0.2.0'
+group = 'dev.mcrashcraft'
+base { archivesName = 'namelessmc-fabric-' + requestedGame }
+layout.buildDirectory = file('build/' + requestedGame)
+java.toolchain.languageVersion = JavaLanguageVersion.of(25)
+tasks.withType(JavaCompile).configureEach {
+    options.release = minecraftJava
+    options.encoding = 'UTF-8'
+    options.compilerArgs += ['-proc:none']
+}
+repositories { mavenCentral(); maven { url = 'https://maven.fabricmc.net/' } }
+configurations { shade; implementation.extendsFrom shade }
+configurations.shade.dependencies.all { dependency ->
+    if (dependency instanceof org.gradle.api.artifacts.ModuleDependency) dependency.exclude group: 'org.slf4j'
+}
+dependencies {
+    minecraft 'com.mojang:minecraft:' + requestedGame
+    if (!requestedGame.startsWith('26.')) mappings loom.officialMojangMappings()
+    add(requestedGame.startsWith('26.') ? 'implementation' : 'modImplementation', 'net.fabricmc:fabric-loader:' + target.fabric.loader)
+    ['fabric-api-base', 'fabric-command-api-v2', 'fabric-lifecycle-events-v1', 'fabric-networking-api-v1'].each { module ->
+        add(requestedGame.startsWith('26.') ? 'implementation' : 'modImplementation', fabricApi.module(module, target.fabric.fabric_api))
+    }
+    compileOnly 'net.luckperms:api:5.5'
+    compileOnly 'org.checkerframework:checker-qual:3.55.1'
+    compileOnly 'org.slf4j:slf4j-api:2.0.1'
+    shade 'net.kyori:adventure-api:4.26.1'
+    shade 'net.kyori:adventure-text-minimessage:4.26.1'
+    shade 'net.kyori:adventure-text-serializer-gson:4.26.1'
+    shade 'net.kyori:adventure-text-serializer-plain:4.26.1'
+    shade 'org.spongepowered:configurate-yaml:4.2.0'
+    shade 'com.github.mizosoft.methanol:methanol:1.9.0'
+    shade 'com.google.code.gson:gson:2.14.0'
+    shade 'com.google.guava:guava:33.4.8-jre'
+    shade 'org.bstats:bstats-base:3.2.1'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.10.2'
+    testImplementation 'net.luckperms:api:5.5'
+    testImplementation 'org.slf4j:slf4j-api:2.0.1'
+    testRuntimeOnly 'org.slf4j:slf4j-simple:2.0.1'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.10.2'
+}
+sourceSets.main.java.srcDirs += [
+    '../minecraft-adapter/src/main/java',
+    '../forge/vendor/nameless-plugin/common/src/main',
+    '../forge/vendor/nameless-java-api/src/main/java',
+    '../forge/vendor/kyori-event/api/src/main/java',
+    layout.buildDirectory.dir('generated/sources/upstream')
+]
+sourceSets.test.java.srcDir('../forge/src/test/java')
+tasks.register('generateUpstreamConstants', Sync) {
+    from '../forge/vendor/nameless-plugin/common/src/filtered'
+    into layout.buildDirectory.dir('generated/sources/upstream')
+    filter { line -> line.replace('${project.version}', '3.4.2-fabric-' + project.version) }
+}
+tasks.named('compileJava').configure { dependsOn 'generateUpstreamConstants' }
+apply from: 'generate-compatibility.gradle'
+processResources {
+    from '../forge/vendor/nameless-plugin/common/resources'
+    filesMatching('fabric.mod.json') {
+        expand version: project.version, minecraftVersion: requestedGame, javaVersion: minecraftJava,
+                fabricLoader: '0.14.22', fabricApi: target.fabric.fabric_api
+    }
+    from('../forge/LICENSE') { into 'META-INF/licenses/nameless-plugin' }
+    from('../forge/vendor/nameless-java-api/LICENSE') { into 'META-INF/licenses/nameless-java-api' }
+    from('../forge/vendor/kyori-event/license.txt') { into 'META-INF/licenses/kyori-event' }
+    from('../forge/UPSTREAM-NOTICE.md') { into 'META-INF' }
+    from('../forge/third-party-licenses') { into 'META-INF/licenses/third-party' }
+}
+jar { archiveClassifier = 'slim' }
+shadowJar {
+    archiveClassifier = requestedGame.startsWith('26.') ? '' : 'dev-shadow'
+    configurations = [project.configurations.shade]
+    filesMatching('META-INF/services/**') { duplicatesStrategy = DuplicatesStrategy.INCLUDE }
+    mergeServiceFiles()
+    exclude 'META-INF/*.SF', 'META-INF/*.RSA', 'META-INF/*.DSA', 'module-info.class', 'META-INF/versions/**/module-info.class'
+    relocate 'com.namelessmc.java_api', 'dev.mcrashcraft.namelessforge.lib.api'
+    relocate 'net.kyori', 'dev.mcrashcraft.namelessforge.lib.kyori'
+    relocate 'org.spongepowered.configurate', 'dev.mcrashcraft.namelessforge.lib.configurate'
+    relocate 'org.yaml.snakeyaml', 'dev.mcrashcraft.namelessforge.lib.snakeyaml'
+    relocate 'io.leangen.geantyref', 'dev.mcrashcraft.namelessforge.lib.geantyref'
+    relocate 'com.github.mizosoft.methanol', 'dev.mcrashcraft.namelessforge.lib.methanol'
+    relocate 'com.google.gson', 'dev.mcrashcraft.namelessforge.lib.gson'
+    relocate 'com.google.common', 'dev.mcrashcraft.namelessforge.lib.guava'
+    relocate 'com.google.thirdparty', 'dev.mcrashcraft.namelessforge.lib.googlethirdparty'
+    relocate 'com.google.errorprone', 'dev.mcrashcraft.namelessforge.lib.errorprone'
+    relocate 'com.google.j2objc', 'dev.mcrashcraft.namelessforge.lib.j2objc'
+    relocate 'org.reactivestreams', 'dev.mcrashcraft.namelessforge.lib.reactivestreams'
+    relocate 'org.jetbrains.annotations', 'dev.mcrashcraft.namelessforge.lib.jetbrains'
+    relocate 'org.checkerframework', 'dev.mcrashcraft.namelessforge.lib.checkerframework'
+    relocate 'org.jspecify', 'dev.mcrashcraft.namelessforge.lib.jspecify'
+    relocate 'javax.annotation', 'dev.mcrashcraft.namelessforge.lib.javaxannotation'
+    relocate 'org.bstats', 'dev.mcrashcraft.namelessforge.lib.bstats'
+}
+if (!requestedGame.startsWith('26.')) {
+    remapJar {
+        dependsOn shadowJar
+        inputFile = shadowJar.archiveFile
+        archiveClassifier = ''
+    }
+    tasks.named('build').configure { dependsOn 'remapJar' }
+} else tasks.named('build').configure { dependsOn 'shadowJar' }
+tasks.named('test').configure { useJUnitPlatform() }
+
+apply from: '../build-tools/adapter-tests.gradle'
+apply from: '../build-tools/source-bundle.gradle'

@@ -1,0 +1,13 @@
+// Complete corresponding source: all loader projects plus shared adapter and pinned upstream code.
+def repositorySource = rootProject.projectDir.parentFile
+tasks.register('sourceBundle', Zip) {
+    archiveBaseName = 'namelessmc-source'
+    archiveClassifier = 'sources'
+    destinationDirectory = layout.buildDirectory.dir('distributions')
+    from(repositorySource) {
+        include 'forge/**', 'fabric/**', 'neoforge/**', 'minecraft-adapter/**',
+                'build-tools/**', 'compatibility/**', 'scripts/**', 'LICENSE', 'README.md'
+        exclude '**/.git/**', '**/.gradle/**', '**/build/**', '**/target/**', '**/run/**', '**/logs/**',
+                '**/world/**', '**/config/namelessforge/**', '**/runtime-*/**', '**/toolchains/**'
+    }
+}

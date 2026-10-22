@@ -17,9 +17,9 @@ public final class ForgePlayer extends NamelessPlayer {
 
     ForgePlayer(ForgeAudienceProvider audiences, ServerPlayer player) {
         super(audiences.plugin().config(), audiences.playerAudience(player),
-                player.getUUID(), player.getGameProfile().getName());
+                player.getUUID(), MinecraftCompatibility.playerName(player));
         actualUuid = player.getUUID();
-        operator = player.createCommandSourceStack().hasPermission(2);
+        operator = MinecraftCompatibility.hasPermission(player.createCommandSourceStack(), 2);
     }
 
     @Override

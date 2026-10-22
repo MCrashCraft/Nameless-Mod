@@ -13,7 +13,7 @@ public final class ForgeCommandSender extends NamelessConsole {
     ForgeCommandSender(ForgeAudienceProvider audiences, CommandSourceStack source) {
         super(audiences.commandAudience(source));
         this.audiences = audiences;
-        this.privileged = source.hasPermission(4);
+        this.privileged = MinecraftCompatibility.hasPermission(source, 4);
     }
 
     @Override

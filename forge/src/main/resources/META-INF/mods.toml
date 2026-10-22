@@ -1,26 +1,26 @@
 modLoader="javafml"
-loaderVersion="[47,)"
+loaderVersion="[${forgeMajor},)"
 license="GPL-3.0-only"
 
 [[mods]]
 modId="namelessforge"
 version="${version}"
 displayName="NamelessMC Forge (Unofficial)"
-displayTest="IGNORE_SERVER_VERSION"
+displayTest="IGNORE_ALL_VERSION"
 authors="MCrashCraft; upstream NamelessMC contributors"
 description='''Unofficial server-only Forge integration for NamelessMC websites. Derived from the GPL-3.0 Nameless-Plugin shared core; not endorsed by the upstream project.'''
 
 [[dependencies.namelessforge]]
 modId="forge"
 mandatory=true
-versionRange="[47.4.16,48)"
+versionRange="[${forgeVersion},${nextForgeMajor})"
 ordering="NONE"
 side="SERVER"
 
 [[dependencies.namelessforge]]
 modId="minecraft"
 mandatory=true
-versionRange="[1.20.1,1.20.2)"
+versionRange="[${minecraftVersion}]"
 ordering="NONE"
 side="SERVER"
 

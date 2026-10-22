@@ -1,0 +1,812 @@
+{
+  "research_date": "2026-10-22",
+  "retrieved_utc": "2026-10-22T09:13:33.187247+00:00",
+  "scope": "Every stable Minecraft game release from 1.20.1 through 26.3 inclusive; snapshots excluded. Loader prereleases are explicitly labeled. Published loader availability is not NamelessMC compatibility certification.",
+  "minecraft_release_count": 23,
+  "requested_combination_count": 92,
+  "published_loader_combination_count": 90,
+  "releases": [
+    {
+      "minecraft": "1.20.1",
+      "release_time": "2023-06-12T13:25:51+00:00",
+      "java_major": 17,
+      "mojang_version_url": "https://piston-meta.mojang.com/v1/packages/38d412af3b247e485c7f7e50ac25febc4e79ab1d/1.20.1.json",
+      "mojang_version_sha1": "38d412af3b247e485c7f7e50ac25febc4e79ab1d",
+      "mappings": "official-obfuscated-remap",
+      "forge": {
+        "published": true,
+        "version": "47.4.28",
+        "coordinate": "net.minecraftforge:forge:1.20.1-47.4.28",
+        "published_build_count": 137
+      },
+      "neoforge": {
+        "published": true,
+        "version": "1.20.1-47.1.106",
+        "artifact": "net.neoforged:forge",
+        "coordinate": "net.neoforged:forge:1.20.1-47.1.106",
+        "prerelease": false
+      },
+      "fabric": {
+        "game_listed_stable": true,
+        "loader": "0.19.5",
+        "fabric_api": "0.92.12+1.20.1"
+      },
+      "quilt": {
+        "game_listed_stable": true,
+        "loader": "0.30.1",
+        "proposed_artifact": "Fabric-compatible artifact; verify on Quilt, not a QSL-only build"
+      },
+      "nameless_mod_build_or_runtime_verified": false
+    },
+    {
+      "minecraft": "1.20.2",
+      "release_time": "2023-09-20T09:02:57+00:00",
+      "java_major": 17,
+      "mojang_version_url": "https://piston-meta.mojang.com/v1/packages/96dbebfb2894bd7ffbddbc8c509c185473c85922/1.20.2.json",
+      "mojang_version_sha1": "96dbebfb2894bd7ffbddbc8c509c185473c85922",
+      "mappings": "official-obfuscated-remap",
+      "forge": {
+        "published": true,
+        "version": "48.1.0",
+        "coordinate": "net.minecraftforge:forge:1.20.2-48.1.0",
+        "published_build_count": 39
+      },
+      "neoforge": {
+        "published": true,
+        "version": "20.2.93",
+        "artifact": "net.neoforged:neoforge",
+        "coordinate": "net.neoforged:neoforge:20.2.93",
+        "prerelease": false
+      },
+      "fabric": {
+        "game_listed_stable": true,
+        "loader": "0.19.5",
+        "fabric_api": "0.91.6+1.20.2"
+      },
+      "quilt": {
+        "game_listed_stable": true,
+        "loader": "0.30.1",
+        "proposed_artifact": "Fabric-compatible artifact; verify on Quilt, not a QSL-only build"
+      },
+      "nameless_mod_build_or_runtime_verified": false
+    },
+    {
+      "minecraft": "1.20.3",
+      "release_time": "2023-12-04T12:10:32+00:00",
+      "java_major": 17,
+      "mojang_version_url": "https://piston-meta.mojang.com/v1/packages/83458222e3b4fe8d6c069bfdac726f3d43fab053/1.20.3.json",
+      "mojang_version_sha1": "83458222e3b4fe8d6c069bfdac726f3d43fab053",
+      "mappings": "official-obfuscated-remap",
+      "forge": {
+        "published": true,
+        "version": "49.0.2",
+        "coordinate": "net.minecraftforge:forge:1.20.3-49.0.2",
+        "published_build_count": 2
+      },
+      "neoforge": {
+        "published": true,
+        "version": "20.3.8-beta",
+        "artifact": "net.neoforged:neoforge",
+        "coordinate": "net.neoforged:neoforge:20.3.8-beta",
+        "prerelease": true
+      },
+      "fabric": {
+        "game_listed_stable": true,
+        "loader": "0.19.5",
+        "fabric_api": "0.91.1+1.20.3"
+      },
+      "quilt": {
+        "game_listed_stable": true,
+        "loader": "0.30.1",
+        "proposed_artifact": "Fabric-compatible artifact; verify on Quilt, not a QSL-only build"
+      },
+      "nameless_mod_build_or_runtime_verified": false
+    },
+    {
+      "minecraft": "1.20.4",
+      "release_time": "2023-12-07T12:56:20+00:00",
+      "java_major": 17,
+      "mojang_version_url": "https://piston-meta.mojang.com/v1/packages/ee2bc046cef978a91a7494e760a32d4f7f3e835c/1.20.4.json",
+      "mojang_version_sha1": "ee2bc046cef978a91a7494e760a32d4f7f3e835c",
+      "mappings": "official-obfuscated-remap",
+      "forge": {
+        "published": true,
+        "version": "49.2.13",
+        "coordinate": "net.minecraftforge:forge:1.20.4-49.2.13",
+        "published_build_count": 79
+      },
+      "neoforge": {
+        "published": true,
+        "version": "20.4.253",
+        "artifact": "net.neoforged:neoforge",
+        "coordinate": "net.neoforged:neoforge:20.4.253",
+        "prerelease": false
+      },
+      "fabric": {
+        "game_listed_stable": true,
+        "loader": "0.19.5",
+        "fabric_api": "0.97.3+1.20.4"
+      },
+      "quilt": {
+        "game_listed_stable": true,
+        "loader": "0.30.1",
+        "proposed_artifact": "Fabric-compatible artifact; verify on Quilt, not a QSL-only build"
+      },
+      "nameless_mod_build_or_runtime_verified": false
+    },
+    {
+      "minecraft": "1.20.5",
+      "release_time": "2024-04-23T11:54:12+00:00",
+      "java_major": 21,
+      "mojang_version_url": "https://piston-meta.mojang.com/v1/packages/0a72c796b979e5eda34aca1e76c130beea5ab04c/1.20.5.json",
+      "mojang_version_sha1": "0a72c796b979e5eda34aca1e76c130beea5ab04c",
+      "mappings": "official-obfuscated-remap",
+      "forge": {
+        "published": false,
+        "version": null,
+        "coordinate": null,
+        "published_build_count": 0
+      },
+      "neoforge": {
+        "published": true,
+        "version": "20.5.21-beta",
+        "artifact": "net.neoforged:neoforge",
+        "coordinate": "net.neoforged:neoforge:20.5.21-beta",
+        "prerelease": true
+      },
+      "fabric": {
+        "game_listed_stable": true,
+        "loader": "0.19.5",
+        "fabric_api": "0.97.8+1.20.5"
+      },
+      "quilt": {
+        "game_listed_stable": true,
+        "loader": "0.30.1",
+        "proposed_artifact": "Fabric-compatible artifact; verify on Quilt, not a QSL-only build"
+      },
+      "nameless_mod_build_or_runtime_verified": false
+    },
+    {
+      "minecraft": "1.20.6",
+      "release_time": "2024-04-29T12:40:45+00:00",
+      "java_major": 21,
+      "mojang_version_url": "https://piston-meta.mojang.com/v1/packages/c16c1275df4c25b237c34cd1b11a3126c23f2f82/1.20.6.json",
+      "mojang_version_sha1": "c16c1275df4c25b237c34cd1b11a3126c23f2f82",
+      "mappings": "official-obfuscated-remap",
+      "forge": {
+        "published": true,
+        "version": "50.2.14",
+        "coordinate": "net.minecraftforge:forge:1.20.6-50.2.14",
+        "published_build_count": 87
+      },
+      "neoforge": {
+        "published": true,
+        "version": "20.6.144",
+        "artifact": "net.neoforged:neoforge",
+        "coordinate": "net.neoforged:neoforge:20.6.144",
+        "prerelease": false
+      },
+      "fabric": {
+        "game_listed_stable": true,
+        "loader": "0.19.5",
+        "fabric_api": "0.100.8+1.20.6"
+      },
+      "quilt": {
+        "game_listed_stable": true,
+        "loader": "0.30.1",
+        "proposed_artifact": "Fabric-compatible artifact; verify on Quilt, not a QSL-only build"
+      },
+      "nameless_mod_build_or_runtime_verified": false
+    },
+    {
+      "minecraft": "1.21",
+      "release_time": "2024-06-13T08:24:03+00:00",
+      "java_major": 21,
+      "mojang_version_url": "https://piston-meta.mojang.com/v1/packages/09183e46ebe8641c217098341be7fe9a6b7940e3/1.21.json",
+      "mojang_version_sha1": "09183e46ebe8641c217098341be7fe9a6b7940e3",
+      "mappings": "official-obfuscated-remap",
+      "forge": {
+        "published": true,
+        "version": "51.0.33",
+        "coordinate": "net.minecraftforge:forge:1.21-51.0.33",
+        "published_build_count": 25
+      },
+      "neoforge": {
+        "published": true,
+        "version": "21.0.167",
+        "artifact": "net.neoforged:neoforge",
+        "coordinate": "net.neoforged:neoforge:21.0.167",
+        "prerelease": false
+      },
+      "fabric": {
+        "game_listed_stable": true,
+        "loader": "0.19.5",
+        "fabric_api": "0.102.0+1.21"
+      },
+      "quilt": {
+        "game_listed_stable": true,
+        "loader": "0.30.1",
+        "proposed_artifact": "Fabric-compatible artifact; verify on Quilt, not a QSL-only build"
+      },
+      "nameless_mod_build_or_runtime_verified": false
+    },
+    {
+      "minecraft": "1.21.1",
+      "release_time": "2024-08-08T12:24:45+00:00",
+      "java_major": 21,
+      "mojang_version_url": "https://piston-meta.mojang.com/v1/packages/1757c8b1fbfc6b638504e1f6cceb05893f7389d5/1.21.1.json",
+      "mojang_version_sha1": "1757c8b1fbfc6b638504e1f6cceb05893f7389d5",
+      "mappings": "official-obfuscated-remap",
+      "forge": {
+        "published": true,
+        "version": "52.1.20",
+        "coordinate": "net.minecraftforge:forge:1.21.1-52.1.20",
+        "published_build_count": 69
+      },
+      "neoforge": {
+        "published": true,
+        "version": "21.1.264",
+        "artifact": "net.neoforged:neoforge",
+        "coordinate": "net.neoforged:neoforge:21.1.264",
+        "prerelease": false
+      },
+      "fabric": {
+        "game_listed_stable": true,
+        "loader": "0.19.5",
+        "fabric_api": "0.116.17+1.21.1"
+      },
+      "quilt": {
+        "game_listed_stable": true,
+        "loader": "0.30.1",
+        "proposed_artifact": "Fabric-compatible artifact; verify on Quilt, not a QSL-only build"
+      },
+      "nameless_mod_build_or_runtime_verified": false
+    },
+    {
+      "minecraft": "1.21.2",
+      "release_time": "2024-10-22T09:58:55+00:00",
+      "java_major": 21,
+      "mojang_version_url": "https://piston-meta.mojang.com/v1/packages/84365a86d6e8dbfd7fc24afc6995b8295cdb4cde/1.21.2.json",
+      "mojang_version_sha1": "84365a86d6e8dbfd7fc24afc6995b8295cdb4cde",
+      "mappings": "official-obfuscated-remap",
+      "forge": {
+        "published": false,
+        "version": null,
+        "coordinate": null,
+        "published_build_count": 0
+      },
+      "neoforge": {
+        "published": true,
+        "version": "21.2.1-beta",
+        "artifact": "net.neoforged:neoforge",
+        "coordinate": "net.neoforged:neoforge:21.2.1-beta",
+        "prerelease": true
+      },
+      "fabric": {
+        "game_listed_stable": true,
+        "loader": "0.19.5",
+        "fabric_api": "0.106.1+1.21.2"
+      },
+      "quilt": {
+        "game_listed_stable": true,
+        "loader": "0.30.1",
+        "proposed_artifact": "Fabric-compatible artifact; verify on Quilt, not a QSL-only build"
+      },
+      "nameless_mod_build_or_runtime_verified": false
+    },
+    {
+      "minecraft": "1.21.3",
+      "release_time": "2024-10-23T12:28:15+00:00",
+      "java_major": 21,
+      "mojang_version_url": "https://piston-meta.mojang.com/v1/packages/8cebb441bb5b290ef03740a6fa4b33e4a0a1bfa8/1.21.3.json",
+      "mojang_version_sha1": "8cebb441bb5b290ef03740a6fa4b33e4a0a1bfa8",
+      "mappings": "official-obfuscated-remap",
+      "forge": {
+        "published": true,
+        "version": "53.1.16",
+        "coordinate": "net.minecraftforge:forge:1.21.3-53.1.16",
+        "published_build_count": 57
+      },
+      "neoforge": {
+        "published": true,
+        "version": "21.3.100",
+        "artifact": "net.neoforged:neoforge",
+        "coordinate": "net.neoforged:neoforge:21.3.100",
+        "prerelease": false
+      },
+      "fabric": {
+        "game_listed_stable": true,
+        "loader": "0.19.5",
+        "fabric_api": "0.114.1+1.21.3"
+      },
+      "quilt": {
+        "game_listed_stable": true,
+        "loader": "0.30.1",
+        "proposed_artifact": "Fabric-compatible artifact; verify on Quilt, not a QSL-only build"
+      },
+      "nameless_mod_build_or_runtime_verified": false
+    },
+    {
+      "minecraft": "1.21.4",
+      "release_time": "2024-12-03T10:12:57+00:00",
+      "java_major": 21,
+      "mojang_version_url": "https://piston-meta.mojang.com/v1/packages/ee8ab0f6ec89b3127436d35e36aa766c1e85c3a9/1.21.4.json",
+      "mojang_version_sha1": "ee8ab0f6ec89b3127436d35e36aa766c1e85c3a9",
+      "mappings": "official-obfuscated-remap",
+      "forge": {
+        "published": true,
+        "version": "54.1.22",
+        "coordinate": "net.minecraftforge:forge:1.21.4-54.1.22",
+        "published_build_count": 53
+      },
+      "neoforge": {
+        "published": true,
+        "version": "21.4.161",
+        "artifact": "net.neoforged:neoforge",
+        "coordinate": "net.neoforged:neoforge:21.4.161",
+        "prerelease": false
+      },
+      "fabric": {
+        "game_listed_stable": true,
+        "loader": "0.19.5",
+        "fabric_api": "0.119.4+1.21.4"
+      },
+      "quilt": {
+        "game_listed_stable": true,
+        "loader": "0.30.1",
+        "proposed_artifact": "Fabric-compatible artifact; verify on Quilt, not a QSL-only build"
+      },
+      "nameless_mod_build_or_runtime_verified": false
+    },
+    {
+      "minecraft": "1.21.5",
+      "release_time": "2025-03-25T12:14:58+00:00",
+      "java_major": 21,
+      "mojang_version_url": "https://piston-meta.mojang.com/v1/packages/fa9567d4298f0d2a9bf7f74fb478169967d92af3/1.21.5.json",
+      "mojang_version_sha1": "fa9567d4298f0d2a9bf7f74fb478169967d92af3",
+      "mappings": "official-obfuscated-remap",
+      "forge": {
+        "published": true,
+        "version": "55.1.18",
+        "coordinate": "net.minecraftforge:forge:1.21.5-55.1.18",
+        "published_build_count": 41
+      },
+      "neoforge": {
+        "published": true,
+        "version": "21.5.101",
+        "artifact": "net.neoforged:neoforge",
+        "coordinate": "net.neoforged:neoforge:21.5.101",
+        "prerelease": false
+      },
+      "fabric": {
+        "game_listed_stable": true,
+        "loader": "0.19.5",
+        "fabric_api": "0.128.2+1.21.5"
+      },
+      "quilt": {
+        "game_listed_stable": true,
+        "loader": "0.30.1",
+        "proposed_artifact": "Fabric-compatible artifact; verify on Quilt, not a QSL-only build"
+      },
+      "nameless_mod_build_or_runtime_verified": false
+    },
+    {
+      "minecraft": "1.21.6",
+      "release_time": "2025-06-17T11:10:28+00:00",
+      "java_major": 21,
+      "mojang_version_url": "https://piston-meta.mojang.com/v1/packages/8137b78647df617d8a38754c4d61deedb74f9fa5/1.21.6.json",
+      "mojang_version_sha1": "8137b78647df617d8a38754c4d61deedb74f9fa5",
+      "mappings": "official-obfuscated-remap",
+      "forge": {
+        "published": true,
+        "version": "56.0.9",
+        "coordinate": "net.minecraftforge:forge:1.21.6-56.0.9",
+        "published_build_count": 10
+      },
+      "neoforge": {
+        "published": true,
+        "version": "21.6.20-beta",
+        "artifact": "net.neoforged:neoforge",
+        "coordinate": "net.neoforged:neoforge:21.6.20-beta",
+        "prerelease": true
+      },
+      "fabric": {
+        "game_listed_stable": true,
+        "loader": "0.19.5",
+        "fabric_api": "0.128.2+1.21.6"
+      },
+      "quilt": {
+        "game_listed_stable": true,
+        "loader": "0.30.1",
+        "proposed_artifact": "Fabric-compatible artifact; verify on Quilt, not a QSL-only build"
+      },
+      "nameless_mod_build_or_runtime_verified": false
+    },
+    {
+      "minecraft": "1.21.7",
+      "release_time": "2025-06-30T09:32:16+00:00",
+      "java_major": 21,
+      "mojang_version_url": "https://piston-meta.mojang.com/v1/packages/2b9a4b1ad78eb516d8e2c274afb973934d3c8948/1.21.7.json",
+      "mojang_version_sha1": "2b9a4b1ad78eb516d8e2c274afb973934d3c8948",
+      "mappings": "official-obfuscated-remap",
+      "forge": {
+        "published": true,
+        "version": "57.0.3",
+        "coordinate": "net.minecraftforge:forge:1.21.7-57.0.3",
+        "published_build_count": 4
+      },
+      "neoforge": {
+        "published": true,
+        "version": "21.7.25-beta",
+        "artifact": "net.neoforged:neoforge",
+        "coordinate": "net.neoforged:neoforge:21.7.25-beta",
+        "prerelease": true
+      },
+      "fabric": {
+        "game_listed_stable": true,
+        "loader": "0.19.5",
+        "fabric_api": "0.129.0+1.21.7"
+      },
+      "quilt": {
+        "game_listed_stable": true,
+        "loader": "0.30.1",
+        "proposed_artifact": "Fabric-compatible artifact; verify on Quilt, not a QSL-only build"
+      },
+      "nameless_mod_build_or_runtime_verified": false
+    },
+    {
+      "minecraft": "1.21.8",
+      "release_time": "2025-07-17T12:04:02+00:00",
+      "java_major": 21,
+      "mojang_version_url": "https://piston-meta.mojang.com/v1/packages/6b61868e9cc18b59f97241ac46cc84ab605c8152/1.21.8.json",
+      "mojang_version_sha1": "6b61868e9cc18b59f97241ac46cc84ab605c8152",
+      "mappings": "official-obfuscated-remap",
+      "forge": {
+        "published": true,
+        "version": "58.1.26",
+        "coordinate": "net.minecraftforge:forge:1.21.8-58.1.26",
+        "published_build_count": 35
+      },
+      "neoforge": {
+        "published": true,
+        "version": "21.8.57",
+        "artifact": "net.neoforged:neoforge",
+        "coordinate": "net.neoforged:neoforge:21.8.57",
+        "prerelease": false
+      },
+      "fabric": {
+        "game_listed_stable": true,
+        "loader": "0.19.5",
+        "fabric_api": "0.136.1+1.21.8"
+      },
+      "quilt": {
+        "game_listed_stable": true,
+        "loader": "0.30.1",
+        "proposed_artifact": "Fabric-compatible artifact; verify on Quilt, not a QSL-only build"
+      },
+      "nameless_mod_build_or_runtime_verified": false
+    },
+    {
+      "minecraft": "1.21.9",
+      "release_time": "2025-09-30T11:58:43+00:00",
+      "java_major": 21,
+      "mojang_version_url": "https://piston-meta.mojang.com/v1/packages/f928a4d0de2b6a48fac1e12e92516df7b5843002/1.21.9.json",
+      "mojang_version_sha1": "f928a4d0de2b6a48fac1e12e92516df7b5843002",
+      "mappings": "official-obfuscated-remap",
+      "forge": {
+        "published": true,
+        "version": "59.0.5",
+        "coordinate": "net.minecraftforge:forge:1.21.9-59.0.5",
+        "published_build_count": 6
+      },
+      "neoforge": {
+        "published": true,
+        "version": "21.9.16-beta",
+        "artifact": "net.neoforged:neoforge",
+        "coordinate": "net.neoforged:neoforge:21.9.16-beta",
+        "prerelease": true
+      },
+      "fabric": {
+        "game_listed_stable": true,
+        "loader": "0.19.5",
+        "fabric_api": "0.134.1+1.21.9"
+      },
+      "quilt": {
+        "game_listed_stable": true,
+        "loader": "0.30.1",
+        "proposed_artifact": "Fabric-compatible artifact; verify on Quilt, not a QSL-only build"
+      },
+      "nameless_mod_build_or_runtime_verified": false
+    },
+    {
+      "minecraft": "1.21.10",
+      "release_time": "2025-10-07T09:17:23+00:00",
+      "java_major": 21,
+      "mojang_version_url": "https://piston-meta.mojang.com/v1/packages/e8a7596fa677c2b9f0c8aadf600ef0aae2bbe9d3/1.21.10.json",
+      "mojang_version_sha1": "e8a7596fa677c2b9f0c8aadf600ef0aae2bbe9d3",
+      "mappings": "official-obfuscated-remap",
+      "forge": {
+        "published": true,
+        "version": "60.1.18",
+        "coordinate": "net.minecraftforge:forge:1.21.10-60.1.18",
+        "published_build_count": 36
+      },
+      "neoforge": {
+        "published": true,
+        "version": "21.10.64",
+        "artifact": "net.neoforged:neoforge",
+        "coordinate": "net.neoforged:neoforge:21.10.64",
+        "prerelease": false
+      },
+      "fabric": {
+        "game_listed_stable": true,
+        "loader": "0.19.5",
+        "fabric_api": "0.138.4+1.21.10"
+      },
+      "quilt": {
+        "game_listed_stable": true,
+        "loader": "0.30.1",
+        "proposed_artifact": "Fabric-compatible artifact; verify on Quilt, not a QSL-only build"
+      },
+      "nameless_mod_build_or_runtime_verified": false
+    },
+    {
+      "minecraft": "1.21.11",
+      "release_time": "2025-12-09T12:23:30+00:00",
+      "java_major": 21,
+      "mojang_version_url": "https://piston-meta.mojang.com/v1/packages/240f9560a4a6bc07faf42a7032a96b225f76e658/1.21.11.json",
+      "mojang_version_sha1": "240f9560a4a6bc07faf42a7032a96b225f76e658",
+      "mappings": "official-obfuscated-remap",
+      "forge": {
+        "published": true,
+        "version": "61.2.4",
+        "coordinate": "net.minecraftforge:forge:1.21.11-61.2.4",
+        "published_build_count": 33
+      },
+      "neoforge": {
+        "published": true,
+        "version": "21.11.48",
+        "artifact": "net.neoforged:neoforge",
+        "coordinate": "net.neoforged:neoforge:21.11.48",
+        "prerelease": false
+      },
+      "fabric": {
+        "game_listed_stable": true,
+        "loader": "0.19.5",
+        "fabric_api": "0.141.6+1.21.11"
+      },
+      "quilt": {
+        "game_listed_stable": true,
+        "loader": "0.30.1",
+        "proposed_artifact": "Fabric-compatible artifact; verify on Quilt, not a QSL-only build"
+      },
+      "nameless_mod_build_or_runtime_verified": false
+    },
+    {
+      "minecraft": "26.1",
+      "release_time": "2026-03-24T12:11:04+00:00",
+      "java_major": 25,
+      "mojang_version_url": "https://piston-meta.mojang.com/v1/packages/b85db8efa37dc2e9d5cb12ee324a42d22fd98c08/26.1.json",
+      "mojang_version_sha1": "b85db8efa37dc2e9d5cb12ee324a42d22fd98c08",
+      "mappings": "unobfuscated-official-names",
+      "forge": {
+        "published": true,
+        "version": "62.0.9",
+        "coordinate": "net.minecraftforge:forge:26.1-62.0.9",
+        "published_build_count": 8
+      },
+      "neoforge": {
+        "published": true,
+        "version": "26.1.0.19-beta",
+        "artifact": "net.neoforged:neoforge",
+        "coordinate": "net.neoforged:neoforge:26.1.0.19-beta",
+        "prerelease": true
+      },
+      "fabric": {
+        "game_listed_stable": true,
+        "loader": "0.19.5",
+        "fabric_api": "0.145.1+26.1"
+      },
+      "quilt": {
+        "game_listed_stable": true,
+        "loader": "0.30.1",
+        "proposed_artifact": "Fabric-compatible artifact; verify on Quilt, not a QSL-only build"
+      },
+      "nameless_mod_build_or_runtime_verified": false
+    },
+    {
+      "minecraft": "26.1.1",
+      "release_time": "2026-04-01T09:06:36+00:00",
+      "java_major": 25,
+      "mojang_version_url": "https://piston-meta.mojang.com/v1/packages/97d0cc892dbd79962d06ba0851528433596e1e78/26.1.1.json",
+      "mojang_version_sha1": "97d0cc892dbd79962d06ba0851528433596e1e78",
+      "mappings": "unobfuscated-official-names",
+      "forge": {
+        "published": true,
+        "version": "63.0.2",
+        "coordinate": "net.minecraftforge:forge:26.1.1-63.0.2",
+        "published_build_count": 3
+      },
+      "neoforge": {
+        "published": true,
+        "version": "26.1.1.15-beta",
+        "artifact": "net.neoforged:neoforge",
+        "coordinate": "net.neoforged:neoforge:26.1.1.15-beta",
+        "prerelease": true
+      },
+      "fabric": {
+        "game_listed_stable": true,
+        "loader": "0.19.5",
+        "fabric_api": "0.145.4+26.1.1"
+      },
+      "quilt": {
+        "game_listed_stable": true,
+        "loader": "0.30.1",
+        "proposed_artifact": "Fabric-compatible artifact; verify on Quilt, not a QSL-only build"
+      },
+      "nameless_mod_build_or_runtime_verified": false
+    },
+    {
+      "minecraft": "26.1.2",
+      "release_time": "2026-04-09T10:12:23+00:00",
+      "java_major": 25,
+      "mojang_version_url": "https://piston-meta.mojang.com/v1/packages/58e6c8191fc15a21bf55b0695a8c50e1beb8ff55/26.1.2.json",
+      "mojang_version_sha1": "58e6c8191fc15a21bf55b0695a8c50e1beb8ff55",
+      "mappings": "unobfuscated-official-names",
+      "forge": {
+        "published": true,
+        "version": "64.1.5",
+        "coordinate": "net.minecraftforge:forge:26.1.2-64.1.5",
+        "published_build_count": 23
+      },
+      "neoforge": {
+        "published": true,
+        "version": "26.1.2.122",
+        "artifact": "net.neoforged:neoforge",
+        "coordinate": "net.neoforged:neoforge:26.1.2.122",
+        "prerelease": false
+      },
+      "fabric": {
+        "game_listed_stable": true,
+        "loader": "0.19.5",
+        "fabric_api": "0.155.3+26.1.2"
+      },
+      "quilt": {
+        "game_listed_stable": true,
+        "loader": "0.30.1",
+        "proposed_artifact": "Fabric-compatible artifact; verify on Quilt, not a QSL-only build"
+      },
+      "nameless_mod_build_or_runtime_verified": false
+    },
+    {
+      "minecraft": "26.2",
+      "release_time": "2026-06-16T12:03:33+00:00",
+      "java_major": 25,
+      "mojang_version_url": "https://piston-meta.mojang.com/v1/packages/bdfd9856166b7171857c491f15479762f3abda99/26.2.json",
+      "mojang_version_sha1": "bdfd9856166b7171857c491f15479762f3abda99",
+      "mappings": "unobfuscated-official-names",
+      "forge": {
+        "published": true,
+        "version": "65.1.5",
+        "coordinate": "net.minecraftforge:forge:26.2-65.1.5",
+        "published_build_count": 16
+      },
+      "neoforge": {
+        "published": true,
+        "version": "26.2.0.93",
+        "artifact": "net.neoforged:neoforge",
+        "coordinate": "net.neoforged:neoforge:26.2.0.93",
+        "prerelease": false
+      },
+      "fabric": {
+        "game_listed_stable": true,
+        "loader": "0.19.5",
+        "fabric_api": "0.161.0+26.2"
+      },
+      "quilt": {
+        "game_listed_stable": true,
+        "loader": "0.30.1",
+        "proposed_artifact": "Fabric-compatible artifact; verify on Quilt, not a QSL-only build"
+      },
+      "nameless_mod_build_or_runtime_verified": false
+    },
+    {
+      "minecraft": "26.3",
+      "release_time": "2026-09-15T11:23:02+00:00",
+      "java_major": 25,
+      "mojang_version_url": "https://piston-meta.mojang.com/v1/packages/61fff1316bd50312624a858bbb5eb18fa45208ed/26.3.json",
+      "mojang_version_sha1": "61fff1316bd50312624a858bbb5eb18fa45208ed",
+      "mappings": "unobfuscated-official-names",
+      "forge": {
+        "published": true,
+        "version": "66.1.0",
+        "coordinate": "net.minecraftforge:forge:26.3-66.1.0",
+        "published_build_count": 13
+      },
+      "neoforge": {
+        "published": true,
+        "version": "26.3.0.95",
+        "artifact": "net.neoforged:neoforge",
+        "coordinate": "net.neoforged:neoforge:26.3.0.95",
+        "prerelease": false
+      },
+      "fabric": {
+        "game_listed_stable": true,
+        "loader": "0.19.5",
+        "fabric_api": "0.164.0+26.3"
+      },
+      "quilt": {
+        "game_listed_stable": true,
+        "loader": "0.30.1",
+        "proposed_artifact": "Fabric-compatible artifact; verify on Quilt, not a QSL-only build"
+      },
+      "nameless_mod_build_or_runtime_verified": false
+    }
+  ],
+  "unavailable_combinations": [
+    {
+      "minecraft": "1.20.5",
+      "loader": "forge",
+      "reason": "No build published in the official Forge Maven metadata; no promotion listed."
+    },
+    {
+      "minecraft": "1.21.2",
+      "loader": "forge",
+      "reason": "No build published in the official Forge Maven metadata; no promotion listed."
+    }
+  ],
+  "sources": [
+    {
+      "title": "Mojang version manifest",
+      "url": "https://piston-meta.mojang.com/mc/game/version_manifest_v2.json"
+    },
+    {
+      "title": "Forge promotions",
+      "url": "https://files.minecraftforge.net/net/minecraftforge/forge/promotions_slim.json"
+    },
+    {
+      "title": "Forge Maven versions",
+      "url": "https://maven.minecraftforge.net/net/minecraftforge/forge/maven-metadata.xml"
+    },
+    {
+      "title": "NeoForge Maven versions",
+      "url": "https://maven.neoforged.net/releases/net/neoforged/neoforge/maven-metadata.xml"
+    },
+    {
+      "title": "Legacy NeoForge Minecraft1.20.1 Maven versions",
+      "url": "https://maven.neoforged.net/releases/net/neoforged/forge/maven-metadata.xml"
+    },
+    {
+      "title": "Fabric game metadata",
+      "url": "https://meta.fabricmc.net/v2/versions/game"
+    },
+    {
+      "title": "Fabric loader metadata",
+      "url": "https://meta.fabricmc.net/v2/versions/loader"
+    },
+    {
+      "title": "Fabric API Maven versions",
+      "url": "https://maven.fabricmc.net/net/fabricmc/fabric-api/fabric-api/maven-metadata.xml"
+    },
+    {
+      "title": "Quilt game metadata",
+      "url": "https://meta.quiltmc.org/v3/versions/game"
+    },
+    {
+      "title": "Quilt loader metadata",
+      "url": "https://meta.quiltmc.org/v3/versions/loader"
+    },
+    {
+      "title": "Quilt API retirement announcement",
+      "url": "https://quiltmc.org/en/blog/2026-02-03-non-obfuscated-updates/"
+    },
+    {
+      "title": "Quilt Fabric compatibility FAQ",
+      "url": "https://quiltmc.org/en/about/faq/"
+    },
+    {
+      "title": "Fabric26.3 tooling recommendation",
+      "url": "https://www.fabricmc.net/2026/09/15/263.html"
+    }
+  ]
+}

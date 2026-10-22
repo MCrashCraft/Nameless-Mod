@@ -32,9 +32,9 @@ import java.util.function.Consumer;
 
 /** Translates the common audiences without exposing Minecraft state to HTTP workers. */
 public final class ForgeAudienceProvider extends AbstractAudienceProvider implements AutoCloseable {
-    // Adventure defaults follow the newest JSON schema. Minecraft 1.20.1 uses data version 3465.
+    // Select this exact game's JSON schema rather than Adventure's newest default.
     private static final GsonComponentSerializer MINECRAFT_JSON = GsonComponentSerializer.builder()
-            .options(JSONOptions.byDataVersion().at(3465)).build();
+            .options(JSONOptions.byDataVersion().at(MinecraftCompatibility.dataVersion())).build();
     private final MinecraftServer server;
     private final NamelessPlugin plugin;
     private final ForgeCommandSender console;
@@ -98,7 +98,7 @@ public final class ForgeAudienceProvider extends AbstractAudienceProvider implem
             return new ForgePlayer(this, player);
         }
         // Command blocks and other low-privilege non-player sources must not become consoles.
-        return source.hasPermission(4) ? new ForgeCommandSender(this, source) : null;
+        return MinecraftCompatibility.hasPermission(source, 4) ? new ForgeCommandSender(this, source) : null;
     }
 
     Audience playerAudience(ServerPlayer player) {
@@ -130,8 +130,7 @@ public final class ForgeAudienceProvider extends AbstractAudienceProvider implem
         }
         StoreCommandResult completion = new StoreCommandResult();
         try {
-            CommandSourceStack source = server.createCommandSourceStack()
-                    .withCallback((context, succeeded, value) -> completion.completed(succeeded, value))
+            CommandSourceStack source = MinecraftCompatibility.withCallback(server.createCommandSourceStack(), completion::completed)
                     .withSuppressedOutput();
             // This method executes immediately. Its int return alone is insufficient: Forge's
             // cancelled CommandEvent can return 1 even though Brigadier never ran a command.
@@ -174,7 +173,7 @@ public final class ForgeAudienceProvider extends AbstractAudienceProvider implem
             @Override
             public void sendMessage(Identity source, Component message, MessageType type) {
                 if (active) {
-                    send.accept(minecraftComponent(message));
+                    send.accept(minecraftComponent(message, server));
                 }
             }
         };
@@ -218,9 +217,13 @@ public final class ForgeAudienceProvider extends AbstractAudienceProvider implem
                                   List<NamelessPlayer> online) { }
 
     static net.minecraft.network.chat.Component minecraftComponent(Component message) {
+        return minecraftComponent(message, null);
+    }
+
+    static net.minecraft.network.chat.Component minecraftComponent(Component message, MinecraftServer server) {
         try {
             String safeJson = sanitizeChatJson(MINECRAFT_JSON.serialize(message));
-            net.minecraft.network.chat.Component converted = net.minecraft.network.chat.Component.Serializer.fromJson(safeJson);
+            net.minecraft.network.chat.Component converted = MinecraftCompatibility.parseComponent(safeJson, server);
             if (converted != null) {
                 return converted;
             }
@@ -229,7 +232,7 @@ public final class ForgeAudienceProvider extends AbstractAudienceProvider implem
         }
         String plain = PlainTextComponentSerializer.plainText().serialize(message);
         if (plain.length() > 16_384) {
-            plain = plain.substring(0, 16_384) + "…";
+            plain = plain.substring(0, 16_384) + "â€¦";
         }
         return net.minecraft.network.chat.Component.literal(plain);
     }
@@ -283,6 +286,14 @@ public final class ForgeAudienceProvider extends AbstractAudienceProvider implem
         if (value == null || value.length() > 4_096) {
             owner.remove(key);
             return;
+        }
+        // Different game schemas read different fields. Reject an ambiguous event
+        // rather than validate one field while the native codec reads another.
+        for (String field : List.of("value", "url", "command")) {
+            if (click.has(field) && !value.equals(primitiveString(click.get(field)))) {
+                owner.remove(key);
+                return;
+            }
         }
         if ("open_url".equals(action)) {
             try {

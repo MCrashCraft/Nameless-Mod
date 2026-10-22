@@ -2,7 +2,6 @@ package dev.mcrashcraft.namelessforge;
 
 import com.namelessmc.plugin.common.AbstractDataSender;
 import com.namelessmc.plugin.common.NamelessPlugin;
-import net.minecraft.SharedConstants;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.versions.forge.ForgeVersion;
 
@@ -16,7 +15,7 @@ public final class ForgeDataSender extends AbstractDataSender {
     @Override protected void registerCustomProviders() {
         registerGlobalInfoProvider(json -> {
             json.addProperty("platform", "Forge");
-            json.addProperty("version", SharedConstants.getCurrentVersion().getName());
+            json.addProperty("version", MinecraftCompatibility.minecraftVersion());
             json.addProperty("forge_version", ForgeVersion.getVersion());
             json.addProperty("max_players", server.getMaxPlayers());
             json.addProperty("online_players", getPlugin().audiences().onlinePlayers().size());

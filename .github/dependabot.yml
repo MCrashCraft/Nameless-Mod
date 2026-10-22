@@ -1,7 +1,10 @@
 version: 2
 updates:
-- package-ecosystem: maven
-  directory: "/"
+- package-ecosystem: gradle
+  directories:
+    - "/forge"
+    - "/fabric"
+    - "/neoforge"
   schedule:
     interval: daily
   open-pull-requests-limit: 10

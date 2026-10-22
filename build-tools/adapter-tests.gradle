@@ -1,0 +1,40 @@
+/* SPDX-License-Identifier: GPL-3.0-or-later */
+// Test the real native component, including API families that use event records.
+def testedGame = providers.gradleProperty('minecraftVersion')
+        .orElse(providers.gradleProperty('minecraft_version')).orElse('1.20.1').get()
+def modernCodec = testedGame.startsWith('26.') ||
+        testedGame.startsWith('1.21') ||
+        (testedGame.startsWith('1.20.') && testedGame.tokenize('.')[2].toInteger() >= 5)
+def encoder = modernCodec ? '''
+        var ops = net.minecraft.resources.RegistryOps.create(
+                com.mojang.serialization.JsonOps.INSTANCE, net.minecraft.core.RegistryAccess.EMPTY);
+        return net.minecraft.network.chat.ComponentSerialization.CODEC.encodeStart(ops, component)
+                .result().orElseThrow().toString();
+''' : '        return net.minecraft.network.chat.Component.Serializer.toJson(component);'
+def bootstrap = modernCodec ? '''
+        net.minecraft.SharedConstants.tryDetectVersion();
+        net.minecraft.server.Bootstrap.bootStrap();
+''' : '        // Legacy native chat serializers do not require the full registry bootstrap.'
+def generatedTestSupport = layout.buildDirectory.dir('generated/sources/test-support')
+tasks.register('generateNativeChatTestSupport') {
+    inputs.property('minecraftVersion', testedGame)
+    inputs.file(rootProject.file('../build-tools/adapter-tests.gradle'))
+    outputs.dir(generatedTestSupport)
+    doLast {
+        def target = generatedTestSupport.get().file('dev/mcrashcraft/namelessforge/NativeChatTestSupport.java').asFile
+        target.parentFile.mkdirs()
+        target.setText('''/* SPDX-License-Identifier: GPL-3.0-or-later */
+package dev.mcrashcraft.namelessforge;
+final class NativeChatTestSupport {
+    static void bootstrap() {
+@@BOOTSTRAP@@
+    }
+    static String json(net.minecraft.network.chat.Component component) {
+@@ENCODER@@
+    }
+}
+'''.replace('@@ENCODER@@', encoder).replace('@@BOOTSTRAP@@', bootstrap), 'UTF-8')
+    }
+}
+sourceSets.test.java.srcDir(generatedTestSupport)
+tasks.named('compileTestJava').configure { dependsOn 'generateNativeChatTestSupport' }

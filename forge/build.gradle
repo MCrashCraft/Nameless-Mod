@@ -1,25 +1,30 @@
+import groovy.json.JsonSlurper
+
 plugins {
     id 'net.minecraftforge.gradle' version '6.0.54'
     id 'com.github.johnrengelman.shadow' version '8.1.1'
 }
 
-version = '0.1.1'
+def requestedGame = providers.gradleProperty('minecraftVersion').orElse(providers.gradleProperty('minecraft_version')).getOrElse('1.20.1')
+def target = new JsonSlurper().parse(file('../compatibility/targets.json')).releases.find { it.minecraft == requestedGame }
+if (target == null || !target.forge.published) throw new GradleException('No published Forge loader for requested Minecraft target: ' + requestedGame)
+def forgeMajor = target.forge.version.tokenize('.')[0] as int
+// The 1.20.1 floor is checked against the pack's original Forge runtime in a disposable server.
+def minimumForge = requestedGame == '1.20.1' ? '47.4.16' : target.forge.version
+def eventBus7 = requestedGame.startsWith('26.') || requestedGame.startsWith('1.21.') && (requestedGame.tokenize('.')[2] as int) >= 6
+ext.minecraftVersion = requestedGame
+version = '0.2.0'
 group = 'dev.mcrashcraft'
-base { archivesName = 'namelessmc-forge-1.20.1' }
-java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+base { archivesName = 'namelessmc-forge-' + requestedGame }
+layout.buildDirectory = file('build/' + requestedGame)
+java.toolchain.languageVersion = JavaLanguageVersion.of(target.java_major as int)
 
 minecraft {
-    mappings channel: 'official', version: '1.20.1'
-    runs {
-        server {
-            workingDirectory project.file('run')
-            args '--nogui'
-            mods { namelessforge { source sourceSets.main } }
-        }
-    }
+    mappings channel: 'official', version: requestedGame
 }
-
-repositories { mavenCentral() }
+repositories {
+    mavenCentral()
+}
 
 configurations {
     shade
@@ -32,7 +37,7 @@ configurations.shade.dependencies.all { dependency ->
 }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.20.1-47.4.16'
+    minecraft 'net.minecraftforge:forge:' + requestedGame + '-' + target.forge.version
     compileOnly 'net.luckperms:api:5.5'
     compileOnly 'org.checkerframework:checker-qual:3.55.1'
     compileOnly 'org.slf4j:slf4j-api:2.0.1'
@@ -53,10 +58,12 @@ dependencies {
 }
 
 sourceSets.main.java.srcDirs += [
+    '../minecraft-adapter/src/main/java',
     'vendor/nameless-plugin/common/src/main',
     'vendor/nameless-java-api/src/main/java',
     'vendor/kyori-event/api/src/main/java',
-    layout.buildDirectory.dir('generated/sources/upstream')
+    layout.buildDirectory.dir('generated/sources/upstream'),
+    layout.buildDirectory.dir('generated/sources/native-bootstrap')
 ]
 
 tasks.register('generateUpstreamConstants', Sync) {
@@ -69,7 +76,42 @@ tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
     options.compilerArgs += ['-proc:none']
 }
-tasks.named('compileJava').configure { dependsOn 'generateUpstreamConstants' }
+tasks.register('generateNativeBootstrap') {
+    inputs.property('minecraftVersion', requestedGame)
+    inputs.property('eventBus7', eventBus7)
+    inputs.file('src/templates/NamelessForgeMod.java.template')
+    outputs.dir(layout.buildDirectory.dir('generated/sources/native-bootstrap'))
+    doLast {
+        def constructor = eventBus7 ? '''public NamelessForgeMod(net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext context) {
+        if (FMLEnvironment.dist != Dist.DEDICATED_SERVER) return;
+        RegisterCommandsEvent.BUS.addListener(this::registerCommands);
+        ServerStartedEvent.BUS.addListener(this::started);
+        ServerStoppingEvent.BUS.addListener(this::stopping);
+        PlayerEvent.PlayerLoggedInEvent.BUS.addListener(this::joined);
+        PlayerEvent.PlayerLoggedOutEvent.BUS.addListener(this::left);
+        TickEvent.ServerTickEvent.Post.BUS.addListener(this::tick);
+    }''' : '''public NamelessForgeMod() {
+        if (FMLEnvironment.dist != Dist.DEDICATED_SERVER) return;
+        var bus = net.minecraftforge.common.MinecraftForge.EVENT_BUS;
+        bus.addListener(this::registerCommands);
+        bus.addListener(this::started);
+        bus.addListener(this::stopping);
+        bus.addListener(this::joined);
+        bus.addListener(this::left);
+        bus.addListener(this::tick);
+    }'''
+        def tickType = eventBus7 ? 'TickEvent.ServerTickEvent.Post' : 'TickEvent.ServerTickEvent'
+        def tickGuard = eventBus7 ? 'if (!loaded) return;' : 'if (event.phase != TickEvent.Phase.END || !loaded) return;'
+        def text = file('src/templates/NamelessForgeMod.java.template').getText('UTF-8')
+                .replace('@@CONSTRUCTOR@@', constructor).replace('@@TICK_TYPE@@', tickType).replace('@@TICK_GUARD@@', tickGuard)
+        def output = layout.buildDirectory.file('generated/sources/native-bootstrap/dev/mcrashcraft/namelessforge/NamelessForgeMod.java').get().asFile
+        output.parentFile.mkdirs(); output.setText(text, 'UTF-8')
+    }
+}
+tasks.named('compileJava').configure { dependsOn 'generateUpstreamConstants', 'generateNativeBootstrap' }
+apply from: '../fabric/generate-compatibility.gradle'
+apply from: '../build-tools/adapter-tests.gradle'
+
 
 tasks.register('gatherDependencyLicenses') {
     inputs.files configurations.shade
@@ -90,7 +132,9 @@ tasks.register('gatherDependencyLicenses') {
 processResources {
     dependsOn 'gatherDependencyLicenses'
     from 'vendor/nameless-plugin/common/resources'
-    filesMatching('META-INF/mods.toml') { expand 'version': project.version }
+    filesMatching('META-INF/mods.toml') { expand version: project.version, minecraftVersion: requestedGame,
+            forgeVersion: minimumForge, forgeMajor: forgeMajor, nextForgeMajor: forgeMajor + 1 }
+
     from('LICENSE') { into 'META-INF/licenses/nameless-plugin' }
     from('vendor/nameless-java-api/LICENSE') { into 'META-INF/licenses/nameless-java-api' }
     from('vendor/kyori-event/license.txt') { into 'META-INF/licenses/kyori-event' }
@@ -129,12 +173,4 @@ reobf { shadowJar {} }
 tasks.named('build').configure { dependsOn 'reobfShadowJar' }
 tasks.named('test').configure { useJUnitPlatform() }
 
-tasks.register('sourceBundle', Zip) {
-    archiveBaseName = 'namelessmc-forge-1.20.1'
-    archiveClassifier = 'sources'
-    destinationDirectory = layout.buildDirectory.dir('distributions')
-    from('.') {
-        include 'src/**', 'vendor/**', 'third-party-licenses/**', 'gradle/**', 'gradlew', 'gradlew.bat', '*.gradle', 'gradle.properties', 'LICENSE', '*.md'
-        exclude '**/.git/**', '**/target/**', '**/build/**', '**/.gradle/**'
-    }
-}
+apply from: '../build-tools/source-bundle.gradle'

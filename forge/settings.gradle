@@ -1,7 +1,14 @@
 pluginManagement {
     repositories {
+        maven {
+            url = 'https://maven.minecraftforge.net/'
+            content { includeGroupByRegex('net\\.minecraftforge.*') }
+        }
         gradlePluginPortal()
-        maven { url = 'https://maven.minecraftforge.net/' }
     }
 }
 rootProject.name = 'namelessmc-forge'
+def game = providers.gradleProperty('minecraftVersion').orElse(providers.gradleProperty('minecraft_version')).getOrElse('1.20.1')
+def modern = game.startsWith('26.') || game.startsWith('1.21') || game == '1.20.6'
+if (modern) rootProject.buildFileName = 'build-modern.gradle'
+println("NamelessMC Forge target: ${game}; build script: ${rootProject.buildFileName}")

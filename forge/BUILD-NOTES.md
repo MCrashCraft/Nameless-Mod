@@ -1,20 +1,29 @@
-# Building the unofficial Forge port
+# Building NamelessMC Forge
 
-Use a Java 17 JDK. The included Gradle wrapper selects Gradle 8.8 and ForgeGradle 6.0.54. The game dependency is Forge `1.20.1-47.4.16` with official Minecraft 1.20.1 mappings.
+Use the repository's exact-target driver rather than mixing Gradle generations:
 
-From this directory, run `gradlew.bat test build` on Windows or `bash ./gradlew test build` on Linux. Using `bash` also works when ZIP extraction does not preserve the wrapper's executable permission. Initial dependency setup requires access to the public Forge Maven repository, Maven Central and the Gradle Plugin Portal. All three vendored source projects are included, so no Maven-local installation, Git clone, website API key or private repository is required.
+```powershell
+python scripts/build.py --loader forge --minecraft 1.20.1 --source-bundle
+python scripts/build.py --loader forge --minecraft 26.3 --source-bundle
+```
 
-The distributable mod is `build/libs/namelessmc-forge-1.20.1-0.1.0.jar`. It is shaded and reobfuscated for a production Forge server. The `-slim.jar` file does not contain the runtime libraries and is not the mod to install. LuckPerms, Minecraft and Forge classes are deliberately not bundled; the mod can run without LuckPerms, and group synchronization becomes available when the official LuckPerms mod is installed.
+Add `--plan` to print toolchain requirements without building. The driver uses JDK17 for Minecraft1.20.1–1.20.4, JDK21 for1.20.6–1.21.11, and JDK25 for26.x. JDK paths can be supplied through the documented version-specific environment variables or explicit options. No installed Minecraft profile or global Java setting is changed.
 
-The source directories are:
+The legacy build uses Gradle8.8/ForgeGradle6. Modern targets use Gradle9.7.1/ForgeGradle7 and the matching wrapper in `build-tools/modern-gradle/`. Forge has no published target for Minecraft1.20.5 or1.21.2. Game/Forge dependencies use the exact coordinates in `compatibility/targets.json`.
 
-- `src/main/java`: the native Forge adapter.
-- `vendor/nameless-plugin/common/src/main`: the pinned Nameless-Plugin shared core, with the port's documented compatibility/hardening changes.
-- `vendor/nameless-java-api/src/main/java`: pinned official Nameless Java API source.
-- `vendor/kyori-event/api/src/main/java`: pinned Kyori event API source, avoiding an unpinned snapshot dependency.
+The final artifact is `forge/build/<minecraft>/libs/namelessmc-forge-<minecraft>-0.2.0.jar`. The slim JAR is an intermediate. Legacy versions are reobfuscated as their loader requires; modern Forge builds use the modern loader's names. Never rename a JAR or broaden its metadata to imply support for another game release.
 
-`MavenConstants.java` is generated from the preserved upstream template during compilation. The resource defaults, translations and commands are copied from the vendored shared core. Third-party libraries are relocated under `dev.mcrashcraft.namelessforge.lib` so they cannot replace Forge's Gson, Guava or other installed mods' library packages. Dependency license files, upstream notices and the additional full license texts in `third-party-licenses` are included in the JAR.
+Source layout:
 
-The optional `sourceBundle` task creates a matching source archive under `build/distributions`. It excludes Git metadata, compiled outputs and Gradle caches. Source release packaging should be run only after the final reviewed changes and tests are complete. A source bundle must never include a configured server's API key, runtime configuration or world.
+- `forge/src/templates/`: generated exact-version native Forge entrypoint.
+- `forge/src/main/java/`: Forge data sender.
+- `minecraft-adapter/src/main/java/`: shared Minecraft command, player, audience and scheduler code.
+- `fabric/generate-compatibility.gradle`: exact-version Minecraft API bindings used by all loader projects.
+- `forge/vendor/`: pinned NamelessMC common core, Nameless Java API and Kyori event sources, with attribution.
+- `build-tools/`: native chat test support and complete corresponding-source packaging.
 
-For a first local headless smoke test, `gradlew.bat runServer` uses the `run` folder. This is separate from the existing development and public servers. That optional task requires the normal Minecraft EULA acceptance and a disposable test world. Never point it at an existing server world.
+Dependency libraries are shaded and relocated; Minecraft, Forge and LuckPerms classes are not bundled. Private API connection defaults are blank. Licenses and attribution are included in the distributable.
+
+The `sourceBundle` task includes all sibling sources and build tooling needed to reproduce an artifact. It excludes compiled outputs, Gradle caches, authentication data, server configuration and worlds.
+
+Compilation and unit tests are distinct from a packaged-JAR startup check. See the compatibility documentation and workflow results for actual completed validation. Use only disposable, loopback-bound worlds for local smoke tests; never point a test launcher at an existing server world.

@@ -1,0 +1,23 @@
+/* SPDX-License-Identifier: GPL-3.0-or-later */
+package dev.mcrashcraft.namelessforge;
+
+import com.namelessmc.plugin.common.AbstractDataSender;
+import com.namelessmc.plugin.common.NamelessPlugin;
+import net.minecraft.server.MinecraftServer;
+
+public final class NeoForgeDataSender extends AbstractDataSender {
+    private final MinecraftServer server;
+    public NeoForgeDataSender(NamelessPlugin plugin, MinecraftServer server) {
+        super(plugin); this.server = server;
+    }
+    @Override protected void registerCustomProviders() {
+        registerGlobalInfoProvider(json -> {
+            json.addProperty("platform", "NeoForge");
+            json.addProperty("version", MinecraftCompatibility.minecraftVersion());
+            json.addProperty("neoforge_version", "@LOADER_VERSION@");
+            json.addProperty("max_players", server.getMaxPlayers());
+            json.addProperty("online_players", getPlugin().audiences().onlinePlayers().size());
+            json.addProperty("motd", server.getMotd());
+        });
+    }
+}

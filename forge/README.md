@@ -1,6 +1,8 @@
 # NamelessMC Forge — Unofficial
 
-**0.1.1 beta** · Minecraft **1.20.1** · Forge **47.4.16** · Java **17**
+**0.2.0 — validation in progress** · Exact-version native Forge builds
+
+The new build targets cover published Forge releases within Minecraft **1.20.1–26.3**. See [coverage and limitations](../compatibility/README.md) and the build workflow for actual results. The detailed 0.1.1 checks below are historical evidence for that earlier 1.20.1 release, not certification of every new target.
 
 A server-only Forge port of the shared [NamelessMC server plugin](https://github.com/NamelessMC/Nameless-Plugin). It connects a Minecraft server to a compatible NamelessMC v2 website through the website's API.
 
@@ -13,7 +15,7 @@ This is an independent, unofficial port. It is not endorsed by NamelessMC. Playe
 - Submit player reports and retrieve website account information.
 - Display website announcements and send server/player information when enabled.
 - Send effective LuckPerms groups from Minecraft to the website, including applicable inherited groups and contexts.
-- Keep website requests off the server tick thread, cancel obsolete work on reload/shutdown, and preserve rich account links in Minecraft 1.20.1 chat.
+- Keep website requests off the server tick thread, cancel obsolete work on reload/shutdown, and preserve rich account links using the exact target game's chat schema.
 - Preserve command roots owned by other mods, with namespaced NamelessMC command alternatives.
 - Optional Store fulfillment with synchronous command-result checks and a durable delivery journal that holds failed or uncertain deliveries for review.
 
@@ -23,16 +25,16 @@ Website API features need a configured API URL and key. The release contains nei
 
 | Component | Requirement |
 | --- | --- |
-| Minecraft server | Java Edition 1.20.1 |
-| Loader | Forge 47.4.16; other 47.x versions have not been established by this release's tests |
-| Java | 17 |
+| Minecraft server | One exact Java Edition release with a published Forge target in the compatibility matrix |
+| Loader | Matching Forge version; consult the generated dependency minimum and completed runtime tests |
+| Java | 17 through 1.20.4; 21 from 1.20.5 through 1.21.11; 25 for 26.x |
 | Website | A compatible NamelessMC v2 installation with its API enabled; the newer group-sync API requires 2.1.0+ |
 | Permissions | Optional LuckPerms for Forge; integration target tested is 5.4.102. Without it, self-service commands use public defaults and administrative commands use operator defaults. |
 | Clients | No NamelessMC Forge JAR required |
 
 ## Install and configure
 
-1. Put **`namelessmc-forge-1.20.1-0.1.1.jar`** in the server's `mods` folder. Use the complete JAR, not the `-slim.jar` build artifact.
+1. Put the final **`namelessmc-forge-<minecraft>-0.2.0.jar`** matching your exact game version in the server's `mods` folder. Use the complete JAR, not the `-slim.jar` build artifact. Check the validation results before installation.
 2. Start the server once to generate `config/namelessforge/`.
 3. Enter the website's API URL, API key and Minecraft server ID in `config/namelessforge/main.yaml`. Obtain the exact values from the NamelessMC StaffCP.
 4. Run `/nlpl reload`, then `/namelessforge:status` as an operator. The status command uses cached connection state and does not make a website request itself.
@@ -65,7 +67,7 @@ Optional Store and Websend command/log integrations remain disabled by default. 
 
 Store execution passed an isolated Forge runtime against a mock website. The same release subsequently connected to a real Store website on the development server and completed an automatic empty-queue fetch. Real paid-order fulfillment remains unverified; Websend has not received equivalent runtime coverage. Do not point a development consumer at the public Store connection's paid queue. Bukkit-specific placeholder leaderboards and plugin hooks are not Forge features.
 
-## Verification
+## Historical 0.1.1 verification
 
 Version 0.1.1 passed **43 automated tests**, covering scheduler/reload boundaries, API and timer hardening, LuckPerms group semantics, permissions, command argument policy, rich-message conversion, Store command results, identity validation and durable receipt recovery. The profile-privacy regressions verify that denied named lookups send no HTTP, private profile notes stay hidden from self-service views, and detailed views/name completion require the staff permission.
 
@@ -77,14 +79,14 @@ The exact 0.1.1 release completed startup in the 496-JAR MCrashCraft development
 
 ## Build from source
 
-Use a Java 17 JDK and the included Gradle wrapper. From this directory in PowerShell:
+Use the repository's exact-target build driver with the JDKs shown by `--plan`. From the repository root:
 
 ```powershell
-.\gradlew.bat test build
-.\gradlew.bat sourceBundle
+python scripts/build.py --loader forge --minecraft 1.20.1 --source-bundle
+python scripts/build.py --loader forge --minecraft 26.3 --source-bundle
 ```
 
-The complete server mod is `build/libs/namelessmc-forge-1.20.1-0.1.1.jar`. `build/libs/*-slim.jar` lacks the bundled integration libraries and is not the installable release. The corresponding source ZIP is written to `build/distributions/` and contains the adapter, vendored source, build files, documentation and licenses.
+The complete server mod is `forge/build/<minecraft>/libs/namelessmc-forge-<minecraft>-0.2.0.jar`. A `-slim.jar` lacks bundled integration libraries and is not the installable release. The corresponding source ZIP is under `forge/build/<minecraft>/distributions/` and includes every shared and loader project needed to rebuild.
 
 ## Source and licensing
 

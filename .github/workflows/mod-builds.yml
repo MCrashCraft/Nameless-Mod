@@ -1,0 +1,116 @@
+name: Exact Minecraft mod builds
+
+on:
+  push:
+    branches: [forge-1.20.1]
+    paths:
+      - 'forge/**'
+      - 'fabric/**'
+      - 'neoforge/**'
+      - 'minecraft-adapter/**'
+      - 'build-tools/**'
+      - 'scripts/**'
+      - 'compatibility/**'
+      - '.github/workflows/mod-builds.yml'
+  pull_request:
+    branches: [forge-1.20.1]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: mod-builds-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  targets:
+    runs-on: ubuntu-24.04
+    outputs:
+      matrix: ${{ steps.targets.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - run: python3 -m unittest discover -s scripts -p test_build.py -v
+      - id: targets
+        run: |
+          python3 - <<'PY'
+          import json, os, sys
+          sys.path.insert(0, 'scripts')
+          import build
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as output:
+              print('matrix=' + json.dumps({'include': build.matrix(include_quilt=False)}), file=output)
+          PY
+
+  build:
+    needs: targets
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      max-parallel: 6
+      matrix: ${{ fromJSON(needs.targets.outputs.matrix) }}
+    name: ${{ matrix.loader }} / ${{ matrix.minecraft }}
+    env:
+      # MCP's modern decompiler requests a 4 GiB minimum. Bound child JVMs too.
+      JAVA_TOOL_OPTIONS: '-Xmx4G -XX:ActiveProcessorCount=2'
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6
+        with:
+          distribution: temurin
+          java-version: |
+            17
+            21
+            25
+      - name: Compile, test, audit and bundle complete source
+        run: >-
+          python3 scripts/build.py --loader '${{ matrix.loader }}'
+          --minecraft '${{ matrix.minecraft }}' --source-bundle
+          --receipt '${{ matrix.project }}/build/${{ matrix.minecraft }}/validation/build.json'
+      - name: Start the packaged Fabric mod in a disposable server
+        if: matrix.loader == 'fabric'
+        run: >-
+          python3 scripts/fabric_smoke.py fabric '${{ matrix.minecraft }}'
+          --work '${{ runner.temp }}/nameless-smoke' --accept-eula --timeout 300
+      - name: Check the same packaged mod with Quilt
+        if: matrix.loader == 'fabric'
+        run: >-
+          python3 scripts/fabric_smoke.py quilt '${{ matrix.minecraft }}'
+          --work '${{ runner.temp }}/nameless-smoke' --accept-eula --timeout 300
+      - name: Preserve isolated startup receipts
+        if: always() && matrix.loader == 'fabric'
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: startup-fabric-quilt-${{ matrix.minecraft }}
+          path: |
+            ${{ runner.temp }}/nameless-smoke/runtime/*/*/result.json
+            ${{ runner.temp }}/nameless-smoke/runtime/*/*/smoke.log
+            ${{ runner.temp }}/nameless-smoke/runtime/*/*/installer.log
+          if-no-files-found: ignore
+          retention-days: 14
+      - name: Preserve test failures
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: tests-${{ matrix.loader }}-${{ matrix.minecraft }}
+          path: |
+            ${{ matrix.project }}/build/${{ matrix.minecraft }}/reports/tests/
+            ${{ matrix.project }}/build/${{ matrix.minecraft }}/test-results/
+            ${{ matrix.project }}/build/${{ matrix.minecraft }}/validation/
+          if-no-files-found: ignore
+          retention-days: 14
+      - name: Preserve tested artifacts and corresponding source
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: namelessmc-${{ matrix.loader }}-${{ matrix.minecraft }}
+          path: |
+            ${{ matrix.project }}/build/${{ matrix.minecraft }}/libs/namelessmc-*.jar
+            !${{ matrix.project }}/build/${{ matrix.minecraft }}/libs/*-slim.jar
+            !${{ matrix.project }}/build/${{ matrix.minecraft }}/libs/*-dev*.jar
+            ${{ matrix.project }}/build/${{ matrix.minecraft }}/distributions/*-sources.zip
+          if-no-files-found: error
+          retention-days: 14
