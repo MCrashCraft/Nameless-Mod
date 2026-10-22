@@ -1,12 +1,12 @@
 # NamelessMC for Minecraft Forge 1.20.1
 
-This branch contains MCrashCraft's server-only port of the NamelessMC plugin. It preserves the original plugin source and Git history. The upstream plugin documentation is retained in [README-UPSTREAM.md](README-UPSTREAM.md).
+This branch contains MCrashCraft's server-only NamelessMC mod. Standalone Bukkit, Spigot, Paper, BungeeCord, Velocity and Sponge plugin projects have been removed. Required shared NamelessMC sources remain under `forge/vendor/`, with their licenses and attribution. The original upstream Git history is preserved.
 
 | Project | Version | Purpose |
 | --- | --- | --- |
 | [NamelessMC Forge](forge/) | 0.1.1 | Connect a Forge 1.20.1 server to an existing NamelessMC website, with account commands, LuckPerms integration and optional website modules. |
 
-Both projects target **Minecraft 1.20.1, Forge 47.4.16 and Java 17**. Install server JARs in the server's `mods` folder. Clients do not need these server-only JARs.
+The current published project targets **Minecraft 1.20.1, Forge 47.4.16 and Java 17**. Install its server JAR in the server's `mods` folder. Clients do not need this server-only mod.
 
 ## Configuration
 
