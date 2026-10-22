@@ -1,0 +1,64 @@
+buildscript {
+  ext {
+    indraVersion = "3.1.1"
+  }
+}
+
+plugins {
+  id "net.kyori.indra" version "$indraVersion" apply false
+  id "net.kyori.indra.checkstyle" version "$indraVersion" apply false
+  id "net.kyori.indra.licenser.spotless" version "$indraVersion" apply false
+  id "net.kyori.indra.publishing.sonatype" version "$indraVersion"
+}
+
+group("net.kyori")
+version("5.0.0-SNAPSHOT")
+description("An event bus system.")
+
+indraSonatype {
+  useAlternateSonatypeOSSHost("s01")
+}
+
+subprojects {
+  if(name != "event-bom") {
+    apply plugin: "net.kyori.indra"
+    apply plugin: "net.kyori.indra.checkstyle"
+    apply plugin: "net.kyori.indra.licenser.spotless"
+
+    repositories {
+      mavenLocal()
+      mavenCentral()
+      sonatype.ossSnapshots()
+    }
+
+    dependencies {
+      checkstyle("ca.stellardrift:stylecheck:0.2.1")
+      testImplementation("com.google.guava:guava-testlib:32.0.1-jre")
+      testImplementation("com.google.truth:truth:1.1.4")
+      testImplementation("com.google.truth.extensions:truth-java8-extension:1.1.4")
+      testImplementation(platform("org.junit:junit-bom:5.9.3"))
+      testImplementation("org.junit.jupiter:junit-jupiter-api")
+      testImplementation("org.junit.jupiter:junit-jupiter-engine")
+    }
+  }
+
+  apply plugin: "net.kyori.indra.publishing"
+
+  indra {
+    github("KyoriPowered", "event") {
+      ci = true
+    }
+    mitLicense()
+
+    configurePublications {
+      pom {
+        developers {
+          developer {
+            id = "kashike"
+            timezone = "America/Vancouver"
+          }
+        }
+      }
+    }
+  }
+}

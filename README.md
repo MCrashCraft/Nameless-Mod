@@ -1,57 +1,34 @@
-# Nameless-Plugin
+# NamelessMC for Minecraft Forge 1.20.1
 
-[![build status](https://ci.rkslot.nl/buildStatus/icon?job=Nameless+Plugin)](https://ci.rkslot.nl/job/Nameless%20Plugin/)
-[![translation status](https://translate.namelessmc.com/widgets/namelessmc/-/spigot-plugin/svg-badge.svg)](https://translate.namelessmc.com/engage/namelessmc/)
-[![discord](https://discord.com/api/guilds/246705793066467328/widget.png?style=shield)](https://discord.gg/nameless)
+This branch contains MCrashCraft's server-only Forge port of the NamelessMC plugin and a separate optional cash-exchange addon. It preserves the original plugin source and Git history. The upstream plugin documentation is retained in [README-UPSTREAM.md](README-UPSTREAM.md).
 
-The official Minecraft plugin for NamelessMC v2. For compiled files see the [spigot resource page](https://www.spigotmc.org/resources/nameless-plugin-for-v2.59032/)
+| Project | Version | Purpose |
+| --- | --- | --- |
+| [NamelessMC Forge](forge/) | 0.1.1 | Connect a Forge 1.20.1 server to an existing NamelessMC website, with account commands, LuckPerms integration and optional website modules. |
+| [Cash Exchange addon](addons/cash-exchange/) | 0.1.0 | Optionally exchange Just Enough Drugz physical dollar bills for Nameless Store credits. |
 
-## Features
-* Multi-platform! Supports Spigot 1.8-1.19, BungeeCord, Velocity, Sponge 7-9.
-* Commands to register or verify an account, report a player, read website notifications and more.
-* Configurable command names to avoid conflicts
-* Configurable messages with translation support
-* Server data sender (the plugin can send detailed information about the minecraft servers and the players online to the website)
-* Sync Minecraft groups to website groups
-* Whitelist registered users
-* Ban users on website when banned in-game
-* PlaceholderAPI placeholder for number of notifications (bukkit only)
-* Send placeholders to website for leaderboards (bukkit only)
-* Integration with Websend module to view server logs in StaffCP and run commands on the server.
-* Display website announcements in chat
+Both projects target **Minecraft 1.20.1, Forge 47.4.16 and Java 17**. Install server JARs in the server's `mods` folder. Clients do not need these server-only JARs. The cash-exchange addon is a separate mod; installing it does not replace or modify NamelessMC Forge or Just Enough Drugz.
 
-## Installation
-1. Install the plugin jar file in the `plugins` folder
-2. Restart the server
-3. Modify `config.yaml`: enter API URL and server id.
-4. Run `/nlpl reload`
+## Configuration
 
-## Translations
-<a href="http://translate.namelessmc.com/engage/namelessmc/">
-<img src="http://translate.namelessmc.com/widgets/namelessmc/-/spigot-plugin/multi-auto.svg" alt="Translation status" />
-</a>
+Start with the [Forge installation guide](forge/README.md) and [configuration reference](forge/CONFIGURATION.md). API credentials belong only in the server's private configuration. Optional website features require their corresponding website modules and configuration.
 
-## Compiling
+The cash-exchange addon is **disabled by default**. Its rate is **$1 in eligible Just Enough Drugz bills = 1 Store credit**. It accepts plain $1, $5, $10, $20, $50 and $100 bills from the player's hotbar/main inventory, requires an exact amount and a verified website account linked to the actual Minecraft UUID, and does not create change. See the [addon guide](addons/cash-exchange/README.md) and [configuration reference](addons/cash-exchange/CONFIGURATION.md) before enabling it.
 
-Requirements: Maven, Git, JDK 11, JDK 17 (only required for paper and sponge9)
+Ambiguous cash exchanges are held for operator review. They are never automatically retried or refunded. The website's existing add-credits endpoint does not provide an idempotency key, so this is not a claim of distributed exactly-once delivery.
 
-On Debian/Ubuntu: `apt install maven git openjdk-11-jdk openjdk-17-jdk`
+## Build and validation
 
-You can also use any newer version of the JDK, but that means the compiled plugin won't be compatible with older Java versions.
+Each project is an independent Gradle project. From `forge/` or `addons/cash-exchange/`, use Java 17 and run:
 
-```sh
-git clone https://github.com/NamelessMC/Nameless-Java-API
-cd Nameless-Java-API
-mvn clean install # Uses JDK 11
-cd ..
-
-git clone https://github.com/NamelessMC/Nameless-Plugin
-cd Nameless-Plugin
-mvn clean package # Uses JDK 11 and 17
-# find jar in {bungeecord,paper,spigot,sponge7,sponge8,sponge9,velocity}/target/*
+```powershell
+.\gradlew.bat test build sourceBundle
 ```
 
-Building the entire project can take quite a long time. You might want to build a single module only:
-```sh
-mvn package -pl velocity -am
-```
+On Linux, use `bash gradlew test build sourceBundle` instead. Outputs are generated under each project's `build/` directory.
+
+The current sources passed **43 core tests** and **30 addon tests**. The addon also passed an isolated real Forge runtime check using a mock website, real Just Enough Drugz bills, normal LuckPerms initialization and native player-data saving. These checks used synthetic accounts and test exchanges; they do not claim validation of real paid transactions or public-server deployment.
+
+## License and attribution
+
+This repository uses [GNU GPL version 3](LICENSE). Preserve the individual license notices for vendored dependencies. Each Forge project includes its own license, upstream notices and third-party license records. This is an independently maintained Forge port, not an official NamelessMC upstream release.

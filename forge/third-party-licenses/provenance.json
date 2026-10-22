@@ -1,0 +1,86 @@
+[
+  {
+    "file": "adventure-MIT.txt",
+    "url": "https://raw.githubusercontent.com/PaperMC/adventure/v4.26.1/license.txt",
+    "sha256": "6f3f7529e339bca44fb8693f606267dabf80e11ce228e12e9a4fa3316a30d6b5",
+    "bytes": 1074
+  },
+  {
+    "file": "option-MIT.txt",
+    "url": "https://raw.githubusercontent.com/KyoriPowered/option/master/license.txt",
+    "sha256": "71c1374a3b176c6728754ac99275b321fddbb3e4c2a139e734a3566640e6c1b9",
+    "bytes": 1069
+  },
+  {
+    "file": "examination-MIT.txt",
+    "url": "https://raw.githubusercontent.com/KyoriPowered/examination/master/license.txt",
+    "sha256": "09feac81b5b0c6536121a8cd7be6ba8a00207f8b3ca8a020f4d3017848f00a33",
+    "bytes": 1073
+  },
+  {
+    "file": "configurate-APACHE.txt",
+    "url": "https://raw.githubusercontent.com/SpongePowered/Configurate/master/LICENSE",
+    "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+    "bytes": 11358
+  },
+  {
+    "file": "methanol-MIT.txt",
+    "url": "https://raw.githubusercontent.com/mizosoft/methanol/v1.9.0/LICENSE",
+    "sha256": "32e2d0b1709b0b492e6a1ebdc2b522bb9cc7262e82f798d3ffd18fe594fe78f4",
+    "bytes": 1058
+  },
+  {
+    "file": "bstats-MIT.txt",
+    "url": "https://raw.githubusercontent.com/Bastian/bstats-metrics/master/LICENSE",
+    "sha256": "6d3c689b613d867e7d70425eccc32577160b80d24cba3c31bed168409376bdbb",
+    "bytes": 1073
+  },
+  {
+    "file": "gson-APACHE.txt",
+    "url": "https://raw.githubusercontent.com/google/gson/gson-parent-2.14.0/LICENSE",
+    "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+    "bytes": 11358
+  },
+  {
+    "file": "snakeyaml-APACHE.txt",
+    "url": "https://raw.githubusercontent.com/snakeyaml/snakeyaml/master/LICENSE.txt",
+    "sha256": "a6cba85bc92e0cff7a450b1d873c0eaa2e9fc96bf472df0247a26bec77bf3ff9",
+    "bytes": 10173
+  },
+  {
+    "file": "geantyref-APACHE.txt",
+    "url": "https://raw.githubusercontent.com/leangen/geantyref/master/LICENSE",
+    "sha256": "b40930bbcf80744c86c46a12bc9da056641d722716c378f5659b9e555ef833e1",
+    "bytes": 11357
+  },
+  {
+    "file": "jspecify-APACHE.txt",
+    "url": "https://raw.githubusercontent.com/jspecify/jspecify/main/LICENSE",
+    "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+    "bytes": 11358
+  },
+  {
+    "file": "jetbrains-APACHE.txt",
+    "url": "https://raw.githubusercontent.com/JetBrains/java-annotations/master/LICENSE.txt",
+    "sha256": "8c1e966c7855fb54027bcaf6ebe7a43abe4785791e8cf9148c363761d493d097",
+    "bytes": 11352
+  },
+  {
+    "file": "errorprone-APACHE.txt",
+    "url": "https://raw.githubusercontent.com/google/error-prone/master/COPYING",
+    "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+    "bytes": 11358
+  },
+  {
+    "file": "j2objc-upstream-LICENSE.txt",
+    "url": "https://raw.githubusercontent.com/google/j2objc/master/LICENSE",
+    "sha256": "987365b9e664f4de2006b38c9548f7d5c3dbcc33932f7bb248d4896016d6874e",
+    "bytes": 114258
+  },
+  {
+    "file": "APACHE-2.0.txt",
+    "url": "https://www.apache.org/licenses/LICENSE-2.0.txt",
+    "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+    "bytes": 11358
+  }
+]

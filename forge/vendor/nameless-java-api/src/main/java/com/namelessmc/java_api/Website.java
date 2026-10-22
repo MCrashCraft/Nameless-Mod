@@ -1,0 +1,82 @@
+package com.namelessmc.java_api;
+
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.namelessmc.java_api.exception.NamelessException;
+import com.namelessmc.java_api.exception.UnknownNamelessVersionException;
+import com.namelessmc.java_api.modules.NamelessModule;
+
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
+
+public class Website implements LanguageEntity {
+
+	private final String version;
+	private final Set<NamelessModule> modules;
+	private final String rawLanguage;
+
+	Website(final JsonObject json) throws NamelessException {
+		if (!json.has("nameless_version")) {
+			// This is usually the point where people run into issues if the response is not from NamelessMC
+			// but from something else like a proxy or denial of service protection system, so we throw a useful
+			// exception.
+			throw new NamelessException("Website didn't include namelessmc_version in the info response. Is the response from NamelessMC?");
+		}
+
+		this.version = json.get("nameless_version").getAsString();
+
+		this.modules = StreamSupport.stream(json.get("modules").getAsJsonArray().spliterator(), false)
+				.map(JsonElement::getAsString)
+				.map(NamelessModule::byName)
+				.collect(Collectors.toUnmodifiableSet());
+
+		if (json.get("locale").isJsonNull()) {
+			throw new NamelessException("Website returned null locale. This can happen if you upgraded from v2-pr12 to v2-pr13, please try switching the site's language to something else and back.");
+		}
+
+		this.rawLanguage = json.get("locale").getAsString();
+	}
+
+	public String rawVersion() {
+		return this.version;
+	}
+
+	public NamelessVersion parsedVersion() throws UnknownNamelessVersionException {
+		return NamelessVersion.parse(this.version);
+	}
+
+	public Set<NamelessModule> modules() {
+		return this.modules;
+	}
+
+	@Override
+	public String rawLocale() {
+		return this.rawLanguage;
+	}
+
+	public static class Update {
+
+		private final boolean isUrgent;
+		private final String version;
+
+		Update(final boolean isUrgent, final String version) {
+			this.isUrgent = isUrgent;
+			this.version = version;
+		}
+
+		public boolean isUrgent() {
+			return this.isUrgent;
+		}
+
+		public String rawVersion() {
+			return this.version;
+		}
+
+		public NamelessVersion parsedVersion() throws UnknownNamelessVersionException {
+			return NamelessVersion.parse(this.version);
+		}
+
+	}
+
+}

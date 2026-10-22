@@ -1,0 +1,9 @@
+dependencies {
+  compileOnlyApi("org.checkerframework:checker-qual:3.35.0")
+}
+
+jar {
+  manifest.attributes(
+    "Automatic-Module-Name": "net.kyori.event"
+  )
+}

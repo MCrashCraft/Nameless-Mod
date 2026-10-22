@@ -1,0 +1,140 @@
+plugins {
+    id 'net.minecraftforge.gradle' version '6.0.54'
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
+}
+
+version = '0.1.1'
+group = 'dev.mcrashcraft'
+base { archivesName = 'namelessmc-forge-1.20.1' }
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+
+minecraft {
+    mappings channel: 'official', version: '1.20.1'
+    runs {
+        server {
+            workingDirectory project.file('run')
+            args '--nogui'
+            mods { namelessforge { source sourceSets.main } }
+        }
+    }
+}
+
+repositories { mavenCentral() }
+
+configurations {
+    shade
+    implementation.extendsFrom shade
+}
+configurations.shade.dependencies.all { dependency ->
+    if (dependency instanceof org.gradle.api.artifacts.ModuleDependency) {
+        dependency.exclude group: 'org.slf4j'
+    }
+}
+
+dependencies {
+    minecraft 'net.minecraftforge:forge:1.20.1-47.4.16'
+    compileOnly 'net.luckperms:api:5.5'
+    compileOnly 'org.checkerframework:checker-qual:3.55.1'
+    compileOnly 'org.slf4j:slf4j-api:2.0.1'
+    shade 'net.kyori:adventure-api:4.26.1'
+    shade 'net.kyori:adventure-text-minimessage:4.26.1'
+    shade 'net.kyori:adventure-text-serializer-gson:4.26.1'
+    shade 'net.kyori:adventure-text-serializer-plain:4.26.1'
+    shade 'org.spongepowered:configurate-yaml:4.2.0'
+    shade 'com.github.mizosoft.methanol:methanol:1.9.0'
+    shade 'com.google.code.gson:gson:2.14.0'
+    shade 'com.google.guava:guava:33.4.8-jre'
+    shade 'org.bstats:bstats-base:3.2.1'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.10.2'
+    testImplementation 'net.luckperms:api:5.5'
+    testImplementation 'org.slf4j:slf4j-api:2.0.1'
+    testRuntimeOnly 'org.slf4j:slf4j-simple:2.0.1'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.10.2'
+}
+
+sourceSets.main.java.srcDirs += [
+    'vendor/nameless-plugin/common/src/main',
+    'vendor/nameless-java-api/src/main/java',
+    'vendor/kyori-event/api/src/main/java',
+    layout.buildDirectory.dir('generated/sources/upstream')
+]
+
+tasks.register('generateUpstreamConstants', Sync) {
+    from 'vendor/nameless-plugin/common/src/filtered'
+    into layout.buildDirectory.dir('generated/sources/upstream')
+    filter { line -> line.replace('${project.version}', '3.4.2-forge-' + project.version) }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+    options.compilerArgs += ['-proc:none']
+}
+tasks.named('compileJava').configure { dependsOn 'generateUpstreamConstants' }
+
+tasks.register('gatherDependencyLicenses') {
+    inputs.files configurations.shade
+    outputs.dir layout.buildDirectory.dir('generated/dependency-licenses')
+    doLast {
+        def licenseRoot = layout.buildDirectory.dir('generated/dependency-licenses').get().asFile
+        configurations.shade.resolvedConfiguration.resolvedArtifacts.each { artifact ->
+            copy {
+                from zipTree(artifact.file)
+                include '**/LICENSE*', '**/license*', '**/NOTICE*', '**/notice*', '**/COPYING*'
+                includeEmptyDirs = false
+                into new File(licenseRoot, artifact.moduleVersion.id.group + '.' + artifact.name + '-' + artifact.moduleVersion.id.version)
+            }
+        }
+    }
+}
+
+processResources {
+    dependsOn 'gatherDependencyLicenses'
+    from 'vendor/nameless-plugin/common/resources'
+    filesMatching('META-INF/mods.toml') { expand 'version': project.version }
+    from('LICENSE') { into 'META-INF/licenses/nameless-plugin' }
+    from('vendor/nameless-java-api/LICENSE') { into 'META-INF/licenses/nameless-java-api' }
+    from('vendor/kyori-event/license.txt') { into 'META-INF/licenses/kyori-event' }
+    from('UPSTREAM-NOTICE.md') { into 'META-INF' }
+    from(layout.buildDirectory.dir('generated/dependency-licenses')) { into 'META-INF/licenses/dependencies' }
+    from('third-party-licenses') { into 'META-INF/licenses/third-party' }
+}
+
+jar { archiveClassifier = 'slim' }
+
+shadowJar {
+    archiveClassifier = ''
+    configurations = [project.configurations.shade]
+    mergeServiceFiles()
+    exclude 'META-INF/*.SF', 'META-INF/*.RSA', 'META-INF/*.DSA', 'module-info.class', 'META-INF/versions/**/module-info.class'
+    relocate 'com.namelessmc.java_api', 'dev.mcrashcraft.namelessforge.lib.api'
+    relocate 'net.kyori', 'dev.mcrashcraft.namelessforge.lib.kyori'
+    relocate 'org.spongepowered.configurate', 'dev.mcrashcraft.namelessforge.lib.configurate'
+    relocate 'org.yaml.snakeyaml', 'dev.mcrashcraft.namelessforge.lib.snakeyaml'
+    relocate 'io.leangen.geantyref', 'dev.mcrashcraft.namelessforge.lib.geantyref'
+    relocate 'com.github.mizosoft.methanol', 'dev.mcrashcraft.namelessforge.lib.methanol'
+    relocate 'com.google.gson', 'dev.mcrashcraft.namelessforge.lib.gson'
+    relocate 'com.google.common', 'dev.mcrashcraft.namelessforge.lib.guava'
+    relocate 'com.google.thirdparty', 'dev.mcrashcraft.namelessforge.lib.googlethirdparty'
+    relocate 'com.google.errorprone', 'dev.mcrashcraft.namelessforge.lib.errorprone'
+    relocate 'com.google.j2objc', 'dev.mcrashcraft.namelessforge.lib.j2objc'
+    relocate 'org.reactivestreams', 'dev.mcrashcraft.namelessforge.lib.reactivestreams'
+    relocate 'org.jetbrains.annotations', 'dev.mcrashcraft.namelessforge.lib.jetbrains'
+    relocate 'org.checkerframework', 'dev.mcrashcraft.namelessforge.lib.checkerframework'
+    relocate 'org.jspecify', 'dev.mcrashcraft.namelessforge.lib.jspecify'
+    relocate 'javax.annotation', 'dev.mcrashcraft.namelessforge.lib.javaxannotation'
+    relocate 'org.bstats', 'dev.mcrashcraft.namelessforge.lib.bstats'
+}
+
+reobf { shadowJar {} }
+tasks.named('build').configure { dependsOn 'reobfShadowJar' }
+tasks.named('test').configure { useJUnitPlatform() }
+
+tasks.register('sourceBundle', Zip) {
+    archiveBaseName = 'namelessmc-forge-1.20.1'
+    archiveClassifier = 'sources'
+    destinationDirectory = layout.buildDirectory.dir('distributions')
+    from('.') {
+        include 'src/**', 'vendor/**', 'third-party-licenses/**', 'gradle/**', 'gradlew', 'gradlew.bat', '*.gradle', 'gradle.properties', 'LICENSE', '*.md'
+        exclude '**/.git/**', '**/target/**', '**/build/**', '**/.gradle/**'
+    }
+}
