@@ -2,7 +2,7 @@
 
 **0.2.0** · Server-only integration · Exact-version native Forge builds
 
-Native builds cover published Forge releases within Minecraft **1.20.1–26.3**. Use the [release downloads](https://github.com/MCrashCraft/Nameless-Mod/releases), [coverage matrix](../compatibility/README.md) and [validation results](../compatibility/VALIDATION.md) to select an exact target. Forge has no published loader for Minecraft 1.20.5 or 1.21.2.
+Native builds cover published Forge releases within Minecraft **1.20.1–26.3**. Use the [download table](../RELEASES.md) to select an exact target from the [0.2.0 release](https://github.com/MCrashCraft/Nameless-Mod/releases/tag/v0.2.0), and consult the [coverage matrix](../compatibility/README.md) and [validation results](../compatibility/VALIDATION.md). Forge has no published loader for Minecraft 1.20.5 or 1.21.2.
 
 A server-only Forge port of the shared [NamelessMC server plugin](https://github.com/NamelessMC/Nameless-Plugin). It connects a Minecraft server to a compatible NamelessMC v2 website through the website's API.
 

@@ -16,9 +16,9 @@ Builds use native loader APIs and actual Minecraft classes. Shared bindings acco
 
 ## Choose a download
 
-Select the [release](https://github.com/MCrashCraft/Nameless-Mod/releases) for your exact Minecraft version and server loader. Forge, NeoForge and Fabric have separate native artifacts; Quilt uses the Fabric-compatible artifact for the same game version. Fabric and Quilt need the corresponding Fabric API recorded in [`targets.json`](targets.json).
+All 67 native JARs are in the [0.2.0 release](https://github.com/MCrashCraft/Nameless-Mod/releases/tag/v0.2.0). Use the [download table](../RELEASES.md) to select the file for your exact Minecraft version and server loader. Forge, NeoForge and Fabric have separate native artifacts; Quilt uses the Fabric-compatible artifact for the same game version. Fabric and Quilt need the corresponding Fabric API listed in the download table and [`targets.json`](targets.json).
 
-Use Java 17 for Minecraft 1.20.1–1.20.4, Java 21 for 1.20.5–1.21.11, and Java 25 for 26.x. Install the runtime JAR from the release assets. The accompanying source ZIP is for building the project and does not belong in `mods`.
+Use Java 17 for Minecraft 1.20.1–1.20.4, Java 21 for 1.20.5–1.21.11, and Java 25 for 26.x. Install the runtime JAR from the release assets. The release's single complete source ZIP covers every native artifact and is for building the project; it does not belong in `mods`.
 
 The [mod build workflow](../.github/workflows/mod-builds.yml) compiles and tests every distinct published target independently. A failed job produces no successful release artifact. Its test reports and build receipt distinguish compilation/unit tests from runtime verification. A passing compile is not evidence of a paid purchase, player login or production deployment.
 

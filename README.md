@@ -2,7 +2,7 @@
 
 Connect a modded Minecraft server to your NamelessMC website. Register and link accounts in game, deliver notifications, synchronize permission groups and fulfill Store orders through a server-only integration for **Forge, NeoForge, Fabric and Quilt**.
 
-[Download guide](RELEASES.md) · [GitHub Releases](https://github.com/MCrashCraft/Nameless-Mod/releases) · [Configuration](forge/CONFIGURATION.md) · [Compatibility](compatibility/README.md) · [Validation](compatibility/VALIDATION.md) · [License](LICENSE)
+[Download guide](RELEASES.md) · [Download 0.2.0](https://github.com/MCrashCraft/Nameless-Mod/releases/tag/v0.2.0) · [Configuration](forge/CONFIGURATION.md) · [Compatibility](compatibility/README.md) · [Validation](compatibility/VALIDATION.md) · [License](LICENSE)
 
 Players do not need to install the mod. It adds no blocks or items. This is an independently maintained, unofficial port of the [NamelessMC server integration](https://github.com/NamelessMC/Nameless-Plugin).
 
@@ -34,7 +34,7 @@ Forge 1.21 and 1.21.9 have reproduced configuration-watcher shutdown limitations
 
 ## Installation
 
-1. Download the JAR for the server's **exact Minecraft version and loader** from [Releases](https://github.com/MCrashCraft/Nameless-Mod/releases). Quilt uses the matching Fabric-compatible JAR.
+1. Use the [download table](RELEASES.md) to choose the JAR for the server's **exact Minecraft version and loader**. All 67 JARs are together in the [0.2.0 release](https://github.com/MCrashCraft/Nameless-Mod/releases/tag/v0.2.0). Quilt uses the matching Fabric-compatible JAR.
 2. Put that JAR in the server's `mods` directory. Fabric and Quilt also require the corresponding Fabric API listed in the [version matrix](compatibility/targets.json). Install one NamelessMC loader variant per server.
 3. Start the server once, then enter the website API URL, API key and Minecraft server ID in `config/namelessforge/main.yaml`.
 4. Run `/nlpl reload`, then `/namelessforge:status` as an operator. Enable optional website features only when their website modules and settings are ready.
@@ -63,4 +63,4 @@ Outputs are isolated under `<loader>/build/<minecraft>/libs/`. Install the final
 
 ## License and attribution
 
-[GNU GPL version 3 or later](LICENSE). Shared NamelessMC code is under `forge/vendor/nameless-plugin/`; the Java API and other dependencies retain their individual license notices. Complete corresponding source accompanies the release artifacts. See [upstream attribution](forge/UPSTREAM-NOTICE.md) and [dependency licenses](forge/third-party-licenses/). Original upstream Git history is preserved.
+[GNU GPL version 3 or later](LICENSE). Shared NamelessMC code is under `forge/vendor/nameless-plugin/`; the Java API and other dependencies retain their individual license notices. One complete corresponding-source ZIP in the [0.2.0 release](https://github.com/MCrashCraft/Nameless-Mod/releases/tag/v0.2.0) covers all 67 JARs. See [upstream attribution](forge/UPSTREAM-NOTICE.md) and [dependency licenses](forge/third-party-licenses/). Original upstream Git history is preserved.
